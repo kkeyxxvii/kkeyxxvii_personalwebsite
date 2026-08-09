@@ -205,6 +205,7 @@ function NavBtn({
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
+      aria-current={active ? "page" : undefined}
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -373,9 +374,9 @@ export default function Navbar() {
           className="hidden md:grid items-center px-[42px] py-[10px]"
           style={{ gridTemplateColumns: "minmax(0,1fr) auto minmax(0,1fr)" }}
         >
-          {/* LEFT — brand + inline subtitle */}
+          {/* LEFT — brand + inline subtitle. Brand goes home (convention). */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <NavBtn href="https://www.linkedin.com/in/kartikeypanchal" external={true}>
+            <NavBtn href="/">
               <span style={{ fontFamily: MONO, fontSize: 12, letterSpacing: "0.12em", color: "#181617", fontWeight: 500 }}>
                 Kartikey Panchal
               </span>
@@ -421,7 +422,7 @@ export default function Navbar() {
 
         {/* ── Mobile header ────────────────────────── */}
         <div className="flex md:hidden items-center justify-between px-5 py-[13px]">
-          <Link href="https://www.linkedin.com/in/kartikeypanchal" target="_blank" rel="noopener noreferrer">
+          <Link href="/" onClick={() => setMenuOpen(false)}>
             <span style={{
               fontFamily: MONO, fontSize: 12, letterSpacing: "0.12em",
               color: "#181617", fontWeight: 500,
@@ -435,8 +436,9 @@ export default function Navbar() {
           <button
             onClick={() => setMenuOpen(v => !v)}
             aria-label="Toggle menu"
+            aria-expanded={menuOpen}
             style={{
-              width: 32, height: 32, padding: 6,
+              width: 44, height: 44, padding: 12,
               display: "flex", flexDirection: "column", justifyContent: "center", gap: 5,
               background: "none", border: "none", cursor: "pointer",
             }}

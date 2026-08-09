@@ -18,7 +18,7 @@ export default function IRDAIPage() {
       storageKey="irdai-unlocked"
       title="IRDAI Government Website Redesign"
       subtitle="This case study documents NDA-protected client work completed at Ripple Design. Enter the password to read, or connect with me directly for a personal walkthrough."
-      contactHref="https://www.linkedin.com/in/kartikeypanchal"
+      contactHref="https://www.linkedin.com/in/kkeyxxvii"
     >
       <IRDAICaseStudy />
     </PasswordGate>

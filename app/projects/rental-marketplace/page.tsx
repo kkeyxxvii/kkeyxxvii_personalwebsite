@@ -17,7 +17,7 @@ export default function RentalMarketplacePage() {
       storageKey="rental-marketplace-unlocked"
       title="Next-Gen B2B Rental Marketplace Platform"
       subtitle="End-to-end design for Workorbits — field-ops webapp, mobile app, marketing website, and design system. Enter the password to read, or connect with me directly."
-      contactHref="https://www.linkedin.com/in/kartikeypanchal"
+      contactHref="https://www.linkedin.com/in/kkeyxxvii"
     >
       <RentalMarketplaceCaseStudy />
     </PasswordGate>

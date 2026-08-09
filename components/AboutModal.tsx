@@ -249,9 +249,9 @@ function AboutBody({ size = "modal" }: { size?: "modal" | "expanded" }) {
               style={{ fontFamily: DISPLAY, fontSize: 12, fontWeight: 300, color: C.gray2, textDecorationThickness: "0.5px", textUnderlineOffset: 2 }}>
               kkeyxxvii@gmail.com
             </Link>
-            <Link href="https://linkedin.com/in/kartikeypanchal" target="_blank" rel="noreferrer"
+            <Link href="https://linkedin.com/in/kkeyxxvii" target="_blank" rel="noreferrer"
               style={{ fontFamily: DISPLAY, fontSize: 12, fontWeight: 300, color: C.gray2, textDecorationThickness: "0.5px", textUnderlineOffset: 2 }}>
-              linkedin.com/in/kartikeypanchal
+              linkedin.com/in/kkeyxxvii
             </Link>
           </div>
         </div>

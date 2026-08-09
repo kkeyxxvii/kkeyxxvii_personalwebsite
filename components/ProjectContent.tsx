@@ -17,9 +17,17 @@ export default function ProjectContent({ title, subtitle, description }: Project
       <FadeUp delay={0}>
         <Link
           href="/"
-          className="text-sm text-[#9ca3af] hover:text-[#FF2929] transition-colors mb-8 inline-block hover-underline"
+          className="mb-8 inline-block hover-underline transition-colors"
+          style={{
+            fontFamily:    "var(--font-ibm-mono, var(--font-geist-mono), monospace)",
+            fontSize:      12,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color:         "#888888",
+            textDecoration: "none",
+          }}
         >
-          ← Back to work
+          ← Selected work
         </Link>
       </FadeUp>
 

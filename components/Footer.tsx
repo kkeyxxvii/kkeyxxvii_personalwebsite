@@ -18,6 +18,47 @@ export default function Footer() {
         WebkitBackdropFilter:  "blur(16px) saturate(160%)" as string,
       }}
     >
+      {/* Contact CTA — clear next step for visitors who reached the end */}
+      <div
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 mb-6"
+        style={{ borderBottom: "0.5px solid rgba(24,22,23,0.07)" }}
+      >
+        <p
+          style={{
+            margin:     0,
+            fontFamily: "var(--font-nunito, var(--font-inter), sans-serif)",
+            fontSize:   16,
+            fontWeight: 300,
+            color:      "#181617",
+          }}
+        >
+          Have a project in mind, or just want to talk design?
+        </p>
+        <Link
+          href="mailto:kkeyxxvii@gmail.com"
+          style={{
+            fontFamily:    MONO,
+            fontSize:      12,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase" as const,
+            color:         "#181617",
+            textDecoration: "none",
+            padding:       "10px 18px",
+            borderRadius:  999,
+            background:    "rgba(24,22,23,0.05)",
+            border:        "0.5px solid rgba(24,22,23,0.08)",
+            boxShadow:     "0 1px 4px rgba(0,0,0,0.04)",
+            whiteSpace:    "nowrap" as const,
+            transition:    "background .22s ease",
+            alignSelf:     "flex-start",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(24,22,23,0.09)")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(24,22,23,0.05)")}
+        >
+          Get in touch ↗
+        </Link>
+      </div>
+
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
 
         {/* Left: Credit */}
@@ -43,8 +84,9 @@ export default function Footer() {
         </div>
 
         {/* Right: Social Links */}
-        <div
-          className="flex items-center gap-6"
+        <nav
+          aria-label="Social links"
+          className="flex items-center flex-wrap gap-x-6 gap-y-2"
           style={{
             fontFamily:    MONO,
             fontSize:      12,
@@ -54,7 +96,7 @@ export default function Footer() {
           }}
         >
           {[
-            { label: "LinkedIn",  href: "https://www.linkedin.com/in/kartikeypanchal"   },
+            { label: "LinkedIn",  href: "https://www.linkedin.com/in/kkeyxxvii"   },
             { label: "Instagram", href: "https://www.instagram.com/kkeyxxvii.uiux/"     },
             { label: "Layers",    href: "https://layers.to/kkeyxxvii"                   },
             { label: "Dribbble",  href: "https://dribbble.com/kkeyxxvii"                },
@@ -83,7 +125,7 @@ export default function Footer() {
               {label}
             </Link>
           ))}
-        </div>
+        </nav>
 
       </div>
     </footer>

@@ -21,13 +21,47 @@
   --primary-light:  rgba(24, 22, 23, 0.06);
 
   /* ── Accent ─────────────────────────────────── */
-  --accent:        #FF2929;
-  --accent-yellow: #FFD029;
+  --accent:        #FF2929;   /* Primary   */
+  --blue:          #2972FF;   /* Info      */
+  --accent-yellow: #FFD029;   /* Warning   */
+  --grey:          #2A2A2A;   /* Neutral   */
+  --success:       #428B55;   /* Success — new */
 
   /* ── Gradient ───────────────────────────────── */
   --gradient-start: #FF2929;
   --gradient-end:   #FFD029;
   --gradient:       linear-gradient(135deg, #FF2929, #FFD029);
+
+  /* ── Color scales ──────────────────────────────────────── */
+  /* Red (primary) · brand: #FF2929 · text-default: #EE0015 */
+  --red-50:  #FFE9E5; --red-100: #FFC8C0; --red-200: #FFA59A;
+  --red-300: #FF7D70; --red-400: #FF4840; --red-500: #FF2929;
+  --red-600: #EE0015; --red-700: #A50008; --red-800: #830007;
+  --red-900: #630003; --red-950: #440002;
+
+  /* Blue (info) · brand: #2972FF · text-default: #0051DF */
+  --blue-50:  #E6EFFF; --blue-100: #C8D7FF; --blue-200: #99BEFF;
+  --blue-300: #72A4FF; --blue-400: #4AB8FF; --blue-500: #2972FF;
+  --blue-600: #0051DF; --blue-700: #003FB3; --blue-800: #002E68;
+  --blue-900: #001E61; --blue-950: #000F3C;
+
+  /* Yellow (warning) · brand: #FFD029 · text-default: #806600 */
+  --yellow-50:  #FFEEBC; --yellow-100: #FFDC71; --yellow-200: #FFD029;
+  --yellow-300: #E7B800; --yellow-400: #C49800; --yellow-500: #A07800;
+  --yellow-600: #7E5C00; --yellow-700: #5E4400; --yellow-800: #422E00;
+  --yellow-900: #806600; --yellow-950: #785900;
+
+  /* Grey (neutral) · brand: #2A2A2A · text-default: #1E1E1E */
+  --grey-50:  #FAFAFA; --grey-100: #DEDEDE; --grey-200: #C3C3C3;
+  --grey-300: #A9A9A9; --grey-400: #8F8F8F; --grey-500: #767676;
+  --grey-600: #5F5F5F; --grey-700: #484848; --grey-800: #2A2A2A;
+  --grey-900: #1E1E1E; --grey-950: #080808;
+
+  /* Success · brand: #428B55 · text-default: #357245 */
+  --success-50:  #D4FADA; --success-100: #7BF49A; --success-200: #6BD987;
+  --success-300: #5DBE76; --success-400: #4FA465; --success-500: #428B55;
+  --success-600: #357245; --success-700: #295836; --success-800: #1D4427;
+  --success-900: #122F19; --success-950: #071B0C;
 
   /* ── Active / Nav ───────────────────────────── */
   --active-link: #181617;
@@ -93,6 +127,9 @@
   --color-active:     var(--active-link);
   --color-primary:    var(--primary);
   --color-accent:     var(--accent);
+  --color-blue:       var(--blue);
+  --color-success:    var(--success);
+  --color-grey:       var(--grey);
   --color-surface:    var(--surface);
   --font-sans:        var(--font-inter);
   --font-display:     var(--font-nunito);
@@ -111,6 +148,50 @@ body {
 
 html {
   scroll-behavior: smooth;
+}
+
+/* ══════════════════════════════════════════════════
+   ACCESSIBILITY
+══════════════════════════════════════════════════ */
+
+/* Visible keyboard focus — only for keyboard nav, never on click */
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Skip-to-content link — hidden until keyboard-focused */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 16px;
+  z-index: 999;
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  background: #181617;
+  color: #ffffff;
+  font-family: var(--font-ibm-mono, monospace);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: var(--shadow-lg);
+  transition: top 0.2s ease;
+}
+.skip-link:focus-visible {
+  top: 16px;
+  outline-offset: 2px;
+}
+
+/* Honor the user's motion preference everywhere */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ══════════════════════════════════════════════════
@@ -522,3 +603,19 @@ html {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0);   }
 }
+
+/* ══════════════════════════════════════════════════
+   /showcase route — hide portfolio chrome for the
+   immersive fictional-designer experience. Fully
+   scoped behind html[data-showcase], additive, and
+   reversible. Has zero effect on the real portfolio.
+══════════════════════════════════════════════════ */
+html[data-showcase] .glass-nav,
+html[data-showcase] .fab-kkeyxxviiai,
+html[data-showcase] footer { display: none !important; }
+html[data-showcase] main { padding-top: 0 !important; }
+/* Restore native cursor + hide the portfolio's floating cursor glyph
+   (a fixed z-index:99999 element); the showcase ships its own cursor. */
+html[data-showcase].custom-cursor-active,
+html[data-showcase].custom-cursor-active * { cursor: none !important; }
+html[data-showcase] body > div[style*="99999"] { display: none !important; }

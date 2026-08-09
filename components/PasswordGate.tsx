@@ -28,7 +28,7 @@ export default function PasswordGate({
   subtitle,
   storageKey,
   children,
-  contactHref = "https://www.linkedin.com/in/kartikeypanchal",
+  contactHref = "https://www.linkedin.com/in/kkeyxxvii",
 }: PasswordGateProps) {
   const [unlocked, setUnlocked] = useState(false);
   const [input,    setInput]    = useState("");

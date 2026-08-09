@@ -728,7 +728,7 @@ export default function HouseOfAgentsCaseStudy() {
 
           {/* ── CTA ─────────────────────────────────── */}
           <FadeUp delay={0.1} className="mt-16">
-            <Link href="https://www.linkedin.com/in/kartikeypanchal" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+            <Link href="https://www.linkedin.com/in/kkeyxxvii" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
               <motion.div
                 className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 rounded-xl"
                 style={{ background: "#f3f4f6" }}

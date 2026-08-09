@@ -63,7 +63,7 @@ const projects: Project[] = [
     slug:     "/projects/house-of-agents",
     color:    "#0d0d12",
     category: "freelance" as Category,
-    media:    { type: "component" as const, src: "" },
+    media:    { type: "video" as const, src: "/videos/ai-workforce-platform.mp4" },
     external: false,
   },
   {
@@ -193,9 +193,20 @@ function ProjectCard({ project }: { project: typeof projects[number] }) {
     >
       {/* Media */}
       {project.media.type === "video" ? (
-        <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
-          <source src={project.media.src} type="video/mp4" />
-        </video>
+        <>
+          <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
+            <source src={project.media.src} type="video/mp4" />
+          </video>
+          {/* Cover bottom watermark — gradient fades into the card's own bg color */}
+          <div
+            className="absolute bottom-0 left-0 right-0 pointer-events-none"
+            style={{
+              height: "9%",
+              background: `linear-gradient(to top, ${project.color} 0%, transparent 100%)`,
+              zIndex: 1,
+            }}
+          />
+        </>
       ) : project.media.type === "component" ? (
         project.slug === "/projects/custom-dashboard"
           ? <CustomDashboardCard />
@@ -336,7 +347,7 @@ export default function Home() {
             className="leading-[1.15] mb-8"
             style={{
               fontFamily: DISPLAY,
-              fontSize:   "1.75rem",
+              fontSize:   "clamp(1.7rem, 2.8vw, 2.4rem)",
               fontWeight: 300,
               color:      "#181617",
               maxWidth:   "min(820px, 100%)",
@@ -356,7 +367,7 @@ export default function Home() {
           </h1>
 
           {/* Experience pills — compact centered row */}
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             {[
               { year: "2022 — Now",  company: "Genea",          url: "https://genea.com"  },
               { year: "2020 — 2022", company: "Ripple Design",   url: "#"                  },
@@ -364,14 +375,14 @@ export default function Home() {
               { year: "2017 — 2018", company: "DesignNBuy",      url: "#"                  },
             ].map((exp, i) => (
               <span key={i} className="flex items-baseline gap-2">
-                <span style={{ fontFamily: MONO, fontSize: 9, color: "#888888", letterSpacing: "0.08em" }}>
+                <span style={{ fontFamily: MONO, fontSize: 11, color: "#aaaaaa", letterSpacing: "0.06em" }}>
                   {exp.year}
                 </span>
                 <Link
                   href={exp.url}
                   target="_blank"
                   className="hover-underline transition-colors duration-300"
-                  style={{ fontFamily: MONO, fontSize: 9, color: "#606060", letterSpacing: "0.08em" }}
+                  style={{ fontFamily: MONO, fontSize: 11, color: "#606060", letterSpacing: "0.06em" }}
                 >
                   {exp.company}
                 </Link>
@@ -409,45 +420,54 @@ export default function Home() {
             Selected Work
           </h2>
 
-          {/* Right: filter dropdown */}
-          <div style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>
-            <select
-              aria-label="Filter by category"
-              value={activeTab}
-              onChange={(e) => switchTab(e.target.value as Category)}
-              style={{
-                fontFamily:            MONO,
-                fontSize:              12,
-                letterSpacing:         "0.12em",
-                textTransform:         "uppercase",
-                color:                 "#181617",
-                background:            "rgba(24,22,23,0.05)",
-                backdropFilter:        "blur(12px) saturate(160%)",
-                WebkitBackdropFilter:  "blur(12px) saturate(160%)",
-                border:                "0.5px solid rgba(24,22,23,0.07)",
-                borderRadius:          999,
-                padding:               "8px 34px 8px 14px",
-                cursor:                "pointer",
-                outline:               "none",
-                WebkitAppearance:      "none",
-                appearance:            "none",
-                boxShadow:             "0 1px 4px rgba(0,0,0,0.04)",
-              } as React.CSSProperties}
-            >
-              {TABS.map((tab) => (
-                <option key={tab.id} value={tab.id}>{tab.label}</option>
-              ))}
-            </select>
-            {/* Custom chevron icon */}
-            <svg
-              width="10" height="10" viewBox="0 0 24 24"
-              fill="none" stroke="#888888" strokeWidth="2.5"
-              strokeLinecap="round" strokeLinejoin="round"
-              aria-hidden="true"
-              style={{ position: "absolute", right: 12, pointerEvents: "none" }}
-            >
-              <path d="M6 9l6 6 6-6" />
-            </svg>
+          {/* Right: filter pill tabs */}
+          <div
+            role="tablist"
+            aria-label="Filter projects by category"
+            style={{ display: "flex", alignItems: "center", gap: 4 }}
+          >
+            {TABS.map((tab) => {
+              const count = tab.id === "all"
+                ? projects.filter((p) => !p.hidden).length
+                : projects.filter((p) => p.category === tab.id && !p.hidden).length;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => switchTab(tab.id)}
+                  style={{
+                    fontFamily:    MONO,
+                    fontSize:      11,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase" as const,
+                    color:         isActive ? "#181617" : "#888888",
+                    background:    isActive ? "rgba(24,22,23,0.07)" : "transparent",
+                    border:        isActive ? "0.5px solid rgba(24,22,23,0.10)" : "0.5px solid transparent",
+                    borderRadius:  999,
+                    padding:       "6px 12px",
+                    cursor:        "pointer",
+                    transition:    "color .22s ease, background .22s ease, border .22s ease",
+                    display:       "inline-flex",
+                    alignItems:    "center",
+                    gap:           5,
+                    minHeight:     32,
+                    whiteSpace:    "nowrap" as const,
+                  }}
+                >
+                  {tab.label}
+                  <span style={{
+                    fontFamily: MONO,
+                    fontSize:   9,
+                    color:      isActive ? "#606060" : "#bbbbbb",
+                    lineHeight: 1,
+                  }}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -460,7 +480,7 @@ export default function Home() {
         role="tabpanel"
       >
         <StaggerGrid
-          className="grid grid-cols-2 lg:grid-cols-3 gap-2 pt-2"
+          className="grid grid-cols-2 lg:grid-cols-3 gap-3 pt-3"
           delayChildren={0.05}
           staggerChildren={0.05}
         >

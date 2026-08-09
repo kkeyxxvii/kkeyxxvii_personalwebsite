@@ -18,7 +18,7 @@ export default function GamifiedRafflesPage() {
       storageKey="playfora-unlocked"
       title="Gamified Fundraising Raffles"
       subtitle="This case study is protected under a non-disclosure agreement. Enter the password to read, or connect with me directly for a personal walkthrough."
-      contactHref="https://www.linkedin.com/in/kartikeypanchal"
+      contactHref="https://www.linkedin.com/in/kkeyxxvii"
     >
       <GamifiedRafflesCaseStudy />
     </PasswordGate>

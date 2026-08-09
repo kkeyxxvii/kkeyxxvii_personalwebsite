@@ -326,7 +326,7 @@ export default function AboutContent() {
             </p>
             <p className="text-sm text-[#4a4a5a] leading-relaxed">
               <Link
-                href="https://www.linkedin.com/in/kartikeypanchal"
+                href="https://www.linkedin.com/in/kkeyxxvii"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline underline-offset-2 font-medium text-[#181617] hover:text-[#FF2929] transition-colors"

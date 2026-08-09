@@ -46,7 +46,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${inter.variable} ${nunito.variable} ${ibmPlexMono.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="h-full overflow-x-hidden" style={{ background: "#f5f5f7" }}>
+      {/* suppressHydrationWarning: browser extensions (e.g. Grammarly) inject body
+          attributes before hydration; only attribute-level mismatches are suppressed */}
+      <body className="h-full overflow-x-hidden" style={{ background: "#f5f5f7" }} suppressHydrationWarning>
+
+        {/* Skip link — first focusable element, for keyboard users */}
+        <a href="#main-content" className="skip-link">Skip to content</a>
 
         {/* Custom cursor — outside everything so it's never shifted */}
         <CustomCursor />
@@ -68,7 +73,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           {/* Shell — everything that slides LEFT */}
           <ShiftLayout>
             <Navbar />
-            <main className="flex-1 pt-14">{children}</main>
+            <main id="main-content" className="flex-1 pt-14">{children}</main>
             <Footer />
           </ShiftLayout>
 

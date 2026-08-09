@@ -413,7 +413,7 @@ export default function SchlageIPCaseStudy() {
                   <p style={{ fontSize: 13, color: FADED }}>Reach out on LinkedIn to book a call — I’ll walk you through every screen and share the full Figma file.</p>
                 </div>
                 <a
-                  href="https://www.linkedin.com/in/kartikeypanchal"
+                  href="https://www.linkedin.com/in/kkeyxxvii"
                   target="_blank" rel="noopener noreferrer"
                   className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-full transition-opacity hover:opacity-90"
                   style={{ background: "linear-gradient(135deg, #FF2929, #FFD029)", color: "white", fontSize: 13, fontWeight: 600, whiteSpace: "nowrap", textDecoration: "none" }}
