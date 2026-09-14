@@ -7,7 +7,7 @@ const projectData: Record<string, { title: string; subtitle: string; description
     title: "Enterprise access control redesign",
     subtitle: "Genea • Mobile App 2024",
     description:
-      "Spearheaded the redesign of Genea's mobile app interface, including seamless integration with Apple Wallet and Google Wallet, contributing to a 32% increase in mobile credential adoption within 6 months.",
+      "Redesigned Genea's mobile app interface, including Apple Wallet and Google Wallet integration, contributing to a 32% increase in mobile credential adoption within 6 months.",
   },
   "genea-ds": {
     title: "Scalable design system",

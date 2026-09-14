@@ -915,7 +915,7 @@ export default function RentalMarketplaceCaseStudy() {
             </FadeUp>
 
             <FadeUp delay={0.08}>
-              <div className="flex flex-wrap gap-0 mb-6 rounded-lg overflow-hidden" style={{ border: `1px solid ${BORDER}`, width: "fit-content" }}>
+              <div className="flex flex-wrap gap-0 mb-6 rounded-lg overflow-hidden" style={{ border: `1px solid ${BORDER}`, width: "fit-content", maxWidth: "100%" }}>
                 {SCREENS.map((s, i) => (
                   <motion.button
                     key={i}
@@ -981,7 +981,7 @@ export default function RentalMarketplaceCaseStudy() {
             </FadeUp>
 
             <FadeUp delay={0.08}>
-              <div className="flex flex-wrap gap-0 mb-6 rounded-lg overflow-hidden" style={{ border: `1px solid ${BORDER}`, width: "fit-content" }}>
+              <div className="flex flex-wrap gap-0 mb-6 rounded-lg overflow-hidden" style={{ border: `1px solid ${BORDER}`, width: "fit-content", maxWidth: "100%" }}>
                 {BEFORE_AFTER.map((s, i) => (
                   <motion.button
                     key={i}

@@ -23,32 +23,31 @@ const GLANCE_BADGES = [
   "Builder of Internal Design Tools",
 ];
 
-const INVENTORY = [
+const CAPABILITIES = [
   {
     label: "UX Craft",
-    pct:   94,
     sub:   "Interaction Design · Design Systems · Accessibility",
   },
   {
     label: "Systems Thinking",
-    pct:   90,
     sub:   "Enterprise SaaS · Information Architecture · Product Strategy",
   },
   {
     label: "Human × AI",
-    pct:   88,
     sub:   "Prompt Design · AI Workflows · Internal Tools",
   },
   {
     label: "Design Operations",
-    pct:   84,
     sub:   "Process Improvement · Collaboration · Scalability",
   },
-  {
-    label: "Built with Curiosity",
-    pct:   100,
-    sub:   "Coffee · Side Projects · Continuous Learning",
-  },
+];
+
+/* Where I've worked — reviewers look for company names 81% of the time. */
+const TIMELINE = [
+  { date: "2022 — Now",  org: "Genea",            role: "Senior Product Designer" },
+  { date: "2020 — 2022", org: "Ripple Design",    role: "Senior UI/UX Designer"   },
+  { date: "2018 — 2020", org: "TriCore InfoTech", role: "UI / UX Designer"        },
+  { date: "2017 — 2018", org: "DesignNBuy",       role: "Graphic Designer"        },
 ];
 
 const KNOWN_FOR = [
@@ -58,13 +57,6 @@ const KNOWN_FOR = [
   "Improving design operations",
   "Shipping practical AI-powered solutions",
   "Turning ambiguity into direction",
-];
-
-const EXPLORING = [
-  "AI-assisted UX workflows and prototyping",
-  "Design system evolution for enterprise scale",
-  "Design operations automation",
-  "Enterprise workflow simplification through AI",
 ];
 
 const SIDE_PROJECTS = [
@@ -107,13 +99,18 @@ export default function AboutContent() {
               id="about-headline"
               className="text-[clamp(1.75rem,3.5vw,3.25rem)] leading-[1.15] font-normal text-[#181617] font-[family-name:var(--font-geist-sans)]"
             >
-              I design enterprise software that feels <em className="italic">inevitable.</em>
+              Senior Product Designer, 9 years in enterprise SaaS and security.
             </h1>
           </FadeUp>
 
           <FadeUp className="pb-14" delay={0.12}>
+            <p className="text-sm text-[#4a4a5a] leading-relaxed mb-3">
+              Currently at <strong className="font-medium text-[#181617]">Genea</strong>, designing
+              access control software trusted by enterprise teams across North America.
+              Previously Ripple Design, TriCore InfoTech, DesignNBuy.
+            </p>
             <p className={`text-xs tracking-[0.14em] uppercase text-[#888888] ${MONO}`}>
-              Human judgment.&nbsp;&nbsp;AI acceleration.&nbsp;&nbsp;Better products.
+              Ahmedabad, India · GMT+5:30 · open to remote
             </p>
           </FadeUp>
         </section>
@@ -142,24 +139,16 @@ export default function AboutContent() {
 
             <StaggerItem>
               <p className="text-sm text-[#4a4a5a] leading-relaxed">
-                My work sits at the intersection of design craft, business impact, and emerging technology. Whether
-                I&apos;m building design systems, improving operational workflows, or exploring AI-assisted experiences,
-                I&apos;m focused on reducing complexity without sacrificing capability.
+                I take high-stakes operational workflows — access control, compliance, analytics — and make them
+                safe to run at speed. Recent work cut misconfiguration errors 62%, support tickets 34%, and
+                delete misclicks 90%.
               </p>
             </StaggerItem>
 
             <StaggerItem>
               <p className="text-sm text-[#4a4a5a] leading-relaxed">
-                I believe AI should augment human thinking, not replace it. It helps us move faster, explore further,
-                and challenge assumptions — but great products still require human judgment, empathy, and taste.
-              </p>
-            </StaggerItem>
-
-            <StaggerItem>
-              <p className="text-sm text-[#4a4a5a] leading-relaxed">
-                Today, I focus on enterprise SaaS, security platforms, design operations, and Human × AI
-                collaboration — exploring how intelligent tools can help teams build better products while keeping
-                humans at the center of every decision.
+                Looking for senior and staff product design roles at AI-forward product companies —
+                ideally enterprise SaaS, security, or developer tooling.
               </p>
             </StaggerItem>
 
@@ -167,19 +156,25 @@ export default function AboutContent() {
         </section>
 
         {/* ════════════════════════════════════════════
-            § HUMAN × AI PHILOSOPHY
+            § WHERE I'VE WORKED
         ════════════════════════════════════════════ */}
         <ScrollReveal>
-          <section aria-label="Human × AI Philosophy" className={`${DIVIDER} py-14`}>
-            <SectionLabel>Human × AI Philosophy</SectionLabel>
-            <blockquote
-              className="text-[15px] text-[#181617] leading-[1.7] font-light"
-              style={{ borderLeft: "2px solid #FF2929", paddingLeft: 20 }}
-            >
-              I believe the future of product design isn&apos;t Human <em>or</em> AI — it&apos;s Human{" "}
-              <strong className="font-medium">×</strong> AI. The most meaningful products emerge when machine
-              intelligence amplifies human creativity, judgment, and empathy.
-            </blockquote>
+          <section aria-label="Experience" className={`${DIVIDER} py-14`}>
+            <SectionLabel>Where I&apos;ve Worked</SectionLabel>
+            <div className="flex flex-col gap-4">
+              {TIMELINE.map(({ date, org, role }) => (
+                <div
+                  key={org}
+                  className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 pb-3"
+                  style={{ borderBottom: "1px solid rgba(24,22,23,0.07)" }}
+                >
+                  <span className={`text-[12px] uppercase text-[#888888] shrink-0 ${MONO}`}>{date}</span>
+                  <p className="text-[15px] font-light text-[#181617] leading-snug">
+                    {org} <span className="text-[#888888]">/ {role}</span>
+                  </p>
+                </div>
+              ))}
+            </div>
           </section>
         </ScrollReveal>
 
@@ -208,26 +203,18 @@ export default function AboutContent() {
         </ScrollReveal>
 
         {/* ════════════════════════════════════════════
-            § INVENTORY
+            § FOCUS
         ════════════════════════════════════════════ */}
         <ScrollReveal>
-          <section aria-label="Inventory" className={`${DIVIDER} py-14`}>
-            <SectionLabel>Inventory</SectionLabel>
-            <div className="flex flex-col gap-7">
-              {INVENTORY.map(({ label, pct, sub }) => (
+          <section aria-label="Focus areas" className={`${DIVIDER} py-14`}>
+            <SectionLabel>Focus</SectionLabel>
+            <div className="flex flex-col gap-5">
+              {CAPABILITIES.map(({ label, sub }) => (
                 <div key={label}>
-                  <div className="flex items-center gap-3 mb-1.5">
-                    <span className={`text-[11px] tracking-[0.1em] uppercase text-[#181617] font-medium shrink-0 ${MONO}`}>
-                      {label}
-                    </span>
-                    <div className="flex-1 h-[2px] bg-[#ededed] rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-[#181617] rounded-full"
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                  </div>
-                  <p className="text-[12px] text-[#888888] font-light leading-relaxed">{sub}</p>
+                  <p className={`text-[11px] tracking-[0.1em] uppercase text-[#181617] font-medium mb-1 ${MONO}`}>
+                    {label}
+                  </p>
+                  <p className="text-[13px] text-[#888888] font-light leading-relaxed">{sub}</p>
                 </div>
               ))}
             </div>
@@ -250,23 +237,6 @@ export default function AboutContent() {
                 </div>
               ))}
             </div>
-          </section>
-        </ScrollReveal>
-
-        {/* ════════════════════════════════════════════
-            § CURRENTLY EXPLORING
-        ════════════════════════════════════════════ */}
-        <ScrollReveal>
-          <section aria-label="Currently Exploring" className={`${DIVIDER} py-14`}>
-            <SectionLabel>Currently Exploring</SectionLabel>
-            <ul className="flex flex-col gap-2.5">
-              {EXPLORING.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-[#4a4a5a] font-light leading-relaxed">
-                  <span className="text-[#FF2929] shrink-0 mt-[2px]">→</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
           </section>
         </ScrollReveal>
 
@@ -321,27 +291,26 @@ export default function AboutContent() {
         <ScrollReveal>
           <section aria-label="Contact" className={`${DIVIDER} py-14 pb-24`}>
             <SectionLabel>Contact</SectionLabel>
-            <p className="text-sm text-[#4a4a5a] leading-relaxed mb-1">
+            <p className="text-sm text-[#4a4a5a] leading-relaxed mb-3">
               Open to senior and staff design roles at product-led, AI-forward companies.
+              Based in Ahmedabad, India (GMT+5:30), open to remote.
             </p>
-            <p className="text-sm text-[#4a4a5a] leading-relaxed">
+            <div className="flex flex-col gap-1">
+              <Link
+                href="mailto:kkeyxxvii@gmail.com"
+                className="text-sm underline underline-offset-2 font-medium text-[#181617] hover:text-[#FF2929] transition-colors w-fit"
+              >
+                kkeyxxvii@gmail.com
+              </Link>
               <Link
                 href="https://www.linkedin.com/in/kkeyxxvii"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline underline-offset-2 font-medium text-[#181617] hover:text-[#FF2929] transition-colors"
+                className="text-sm underline underline-offset-2 font-medium text-[#181617] hover:text-[#FF2929] transition-colors w-fit"
               >
-                Reach out on LinkedIn
+                linkedin.com/in/kkeyxxvii
               </Link>
-              {" "}or{" "}
-              <Link
-                href="mailto:kkeyxxvii@gmail.com"
-                className="underline underline-offset-2 font-medium text-[#181617] hover:text-[#FF2929] transition-colors"
-              >
-                send a note
-              </Link>
-              .
-            </p>
+            </div>
           </section>
         </ScrollReveal>
       </div>

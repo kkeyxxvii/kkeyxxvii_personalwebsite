@@ -3,7 +3,7 @@ import AboutContent from "@/components/AboutContent";
 
 export const metadata: Metadata = {
   title: "About | Kartikey Panchal",
-  description: "Senior Product Designer based in Ahmedabad, India. Crafting seamless digital products at scale.",
+  description: "Senior Product Designer, 9 years in enterprise SaaS and security. Currently at Genea. Based in Ahmedabad, India.",
 };
 
 export default function AboutPage() {

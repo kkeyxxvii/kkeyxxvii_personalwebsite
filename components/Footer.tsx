@@ -36,6 +36,7 @@ export default function Footer() {
         </p>
         <Link
           href="mailto:kkeyxxvii@gmail.com"
+          aria-label="Email kkeyxxvii@gmail.com"
           style={{
             fontFamily:    MONO,
             fontSize:      12,
@@ -55,7 +56,7 @@ export default function Footer() {
           onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(24,22,23,0.09)")}
           onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(24,22,23,0.05)")}
         >
-          Get in touch ↗
+          kkeyxxvii@gmail.com ↗
         </Link>
       </div>
 

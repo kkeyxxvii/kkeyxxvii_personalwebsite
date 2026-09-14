@@ -55,8 +55,12 @@ export default function ProjectContent({ title, subtitle, description }: Project
           <p className="text-sm text-[#4a4a5a] leading-relaxed">{description}</p>
         </StaggerItem>
         <StaggerItem>
-          <p className="text-sm text-[#9ca3af] leading-relaxed">
-            Full case study coming soon. Check back later for detailed visuals and process.
+          <p className="text-sm text-[#4a4a5a] leading-relaxed">
+            This one is covered as a summary. The written-up case studies —
+            with decisions, trade-offs, and measured results — are on the{" "}
+            <Link href="/" className="hover-underline" style={{ color: "#181617" }}>
+              work page
+            </Link>.
           </p>
         </StaggerItem>
       </StaggerList>

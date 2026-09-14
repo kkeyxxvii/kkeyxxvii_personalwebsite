@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 import {
   FadeUp,
@@ -21,7 +21,7 @@ const MONO    = "var(--font-ibm-mono, var(--font-geist-mono), monospace)";
 const DISPLAY = "var(--font-nunito, var(--font-inter), system-ui, sans-serif)";
 
 /* ── Categories for tabs ──────────────────────────────────── */
-type Category = "all" | "genea" | "freelance" | "personal";
+type Category = "all" | "genea" | "personal";
 
 type ProjectMedia =
   | { type: "component"; src: string }
@@ -31,6 +31,9 @@ type ProjectMedia =
 type Project = {
   title:    string;
   subtitle: string;
+  /* One verified outcome from the case study — shown on the thumbnail label so the
+     card carries a result before the case study is opened. */
+  metric:   string;
   slug:     string;
   color:    string;
   category: Category;
@@ -43,14 +46,16 @@ type Project = {
 const TABS: { id: Category; label: string }[] = [
   { id: "all",      label: "All"      },
   { id: "genea",    label: "Genea"    },
-  { id: "freelance",label: "Freelance"},
   { id: "personal", label: "Personal" },
 ];
 
+/* Titles follow [verb] + [what changed] + [for whom / under what constraint].
+   Every metric below is taken verbatim from that project's own case study. */
 const projects: Project[] = [
   {
-    title:    "Preventing Silent Misconfiguration in Physical Access Control",
+    title:    "Preventing silent misconfiguration in physical access control",
     subtitle: "Genea · I/O Rules · 2026",
+    metric:   "−62% config errors",
     slug:     "/projects/genea-io-rules",
     color:    "#f2f1f1",
     category: "genea" as Category,
@@ -58,17 +63,19 @@ const projects: Project[] = [
     external: false,
   },
   {
-    title:    "AI Workforce Platform for Sales Teams",
+    title:    "Making AI sales agents operable by non-technical managers",
     subtitle: "House of Agents · AI SaaS · 2025",
+    metric:   "78% template adoption",
     slug:     "/projects/house-of-agents",
     color:    "#0d0d12",
-    category: "freelance" as Category,
+    category: "personal" as Category,
     media:    { type: "video" as const, src: "/videos/ai-workforce-platform.mp4" },
     external: false,
   },
   {
-    title:    "B2B rental marketplace",
+    title:    "Cutting a 6-screen venue booking flow down to 3",
     subtitle: "Workorbits · Side Project · 2020",
+    metric:   "54% → 81% booking completion",
     slug:     "/projects/rental-marketplace",
     color:    "#0d1b4b",
     category: "personal" as Category,
@@ -76,17 +83,19 @@ const projects: Project[] = [
     external: false,
   },
   {
-    title:    "IRDAI government website redesign",
+    title:    "Rebuilding a government insurance portal to WCAG 2.1 AA",
     subtitle: "Ripple Design · Gov · 2021",
+    metric:   "40% faster complaint filing",
     slug:     "/projects/irdai",
     color:    "#e8ecf5",
-    category: "freelance" as Category,
+    category: "personal" as Category,
     media:    { type: "component" as const, src: "" },
     external: false,
   },
   {
-    title:    "Custom analytics dashboard for enterprise facility managers",
+    title:    "Turning a 3-click widget flow into a single drag",
     subtitle: "Genea · Dashboard · 2024",
+    metric:   "+25% operational efficiency",
     slug:     "/projects/custom-dashboard",
     color:    "#0e1b2e",
     category: "genea" as Category,
@@ -96,6 +105,7 @@ const projects: Project[] = [
   {
     title:    "Schlage ENGAGE IP Integration",
     subtitle: "Genea · Hardware · 2026",
+    metric:   "",
     slug:     "/projects/schlage-ip-integration",
     color:    "#C8102E",
     category: "genea" as Category,
@@ -104,8 +114,9 @@ const projects: Project[] = [
     hidden:   true,
   },
   {
-    title:    "Gamified fundraising raffles",
+    title:    "Cutting a 14-field listing form down to 6",
     subtitle: "Playfora · Startup · 2020",
+    metric:   "72% → 83% listing completion",
     slug:     "/projects/gamified-raffles",
     color:    "#2D3BFF",
     category: "personal" as Category,
@@ -158,6 +169,58 @@ function CardArrow() {
   );
 }
 
+/* ── Lazy video ─────────────────────────────────────────────
+   Only fetches once the card is near the viewport, so an off-screen
+   thumbnail never competes with first paint. Holds still for anyone
+   who has asked for reduced motion. */
+function LazyVideo({ src, title }: { src: string; title: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [visible, setVisible] = useState(false);
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setReduced(true);
+      setVisible(true);       // load a still frame, but never animate it
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  /* Autoplay can reject (power-saving, backgrounded tab); the poster frame stays. */
+  useEffect(() => {
+    const el = ref.current;
+    if (el && visible && !reduced) void el.play().catch(() => {});
+  }, [visible, reduced]);
+
+  return (
+    <video
+      ref={ref}
+      src={visible ? src : undefined}
+      loop={!reduced}
+      muted
+      playsInline
+      preload={reduced ? "metadata" : "none"}
+      aria-label={`Product demo — ${title}`}
+      className="absolute inset-0 w-full h-full object-cover"
+    />
+  );
+}
+
 /* ── Project card — cursor-follow hover ────────────────────── */
 function ProjectCard({ project }: { project: typeof projects[number] }) {
   const [active, setActive] = useState(false);
@@ -194,9 +257,7 @@ function ProjectCard({ project }: { project: typeof projects[number] }) {
       {/* Media */}
       {project.media.type === "video" ? (
         <>
-          <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
-            <source src={project.media.src} type="video/mp4" />
-          </video>
+          <LazyVideo src={project.media.src} title={project.title} />
           {/* Cover bottom watermark — gradient fades into the card's own bg color */}
           <div
             className="absolute bottom-0 left-0 right-0 pointer-events-none"
@@ -271,7 +332,7 @@ function ProjectCard({ project }: { project: typeof projects[number] }) {
                 <CardArrow />
               </div>
 
-              {/* Title + subtitle */}
+              {/* Affordance + result — the title already sits below the card */}
               <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
                 <span
                   style={{
@@ -280,10 +341,10 @@ function ProjectCard({ project }: { project: typeof projects[number] }) {
                     fontWeight:  500,
                     color:       "#181617",
                     lineHeight:  1.3,
-                    whiteSpace:  "normal",
+                    whiteSpace:  "nowrap",
                   }}
                 >
-                  {project.title}
+                  Read case study
                 </span>
                 <span
                   style={{
@@ -297,7 +358,7 @@ function ProjectCard({ project }: { project: typeof projects[number] }) {
                     textOverflow:  "ellipsis",
                   }}
                 >
-                  {project.subtitle}
+                  {project.metric || project.subtitle}
                 </span>
               </div>
             </div>
@@ -344,7 +405,7 @@ export default function Home() {
           </div>
 
           <h1
-            className="leading-[1.15] mb-8"
+            className="leading-[1.15] mb-5"
             style={{
               fontFamily: DISPLAY,
               fontSize:   "clamp(1.7rem, 2.8vw, 2.4rem)",
@@ -353,9 +414,10 @@ export default function Home() {
               maxWidth:   "min(820px, 100%)",
             }}
           >
-            Kartikey Panchal is a Product Designer focused on{" "}
+            Kartikey Panchal is a Senior Product Designer with 9 years in enterprise SaaS,
+            designing{" "}
             <em className="not-italic" style={{ fontWeight: 600 }}>Human × AI</em>
-            {" "}and inspired by sci-fi, currently at{" "}
+            {" "}access control at{" "}
             <Link
               href="https://genea.com"
               target="_blank"
@@ -365,6 +427,23 @@ export default function Home() {
               Genea
             </Link>.
           </h1>
+
+          {/* Proof line — answers "are you real?" before the thumbnails do */}
+          <p
+            className="mb-6"
+            style={{
+              margin:        "0 0 24px",
+              fontFamily:    MONO,
+              fontSize:      12,
+              letterSpacing: "0.08em",
+              color:         "#606060",
+              maxWidth:      "min(680px, 100%)",
+              lineHeight:    1.6,
+            }}
+          >
+            Security software trusted by enterprise teams across North America.
+            Previously Ripple Design, TriCore InfoTech.
+          </p>
 
           {/* Experience pills — compact centered row */}
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
@@ -496,6 +575,47 @@ export default function Home() {
                   className="group block transition-transform duration-300 hover:scale-[0.995]"
                 >
                   <ProjectCard project={project} />
+
+                  {/* Always-visible label — the thumbnail has to carry the title and
+                      the result for a reviewer who never hovers. */}
+                  <div style={{ paddingTop: 12, paddingBottom: 4 }}>
+                    <h3
+                      style={{
+                        margin:     0,
+                        fontFamily: DISPLAY,
+                        fontSize:   "clamp(13px, 1.15vw, 15px)",
+                        fontWeight: 400,
+                        color:      "#181617",
+                        lineHeight: 1.35,
+                      }}
+                    >
+                      {project.title}
+                    </h3>
+                    <p
+                      style={{
+                        margin:        "5px 0 0",
+                        display:       "flex",
+                        flexWrap:      "wrap",
+                        alignItems:    "center",
+                        gap:           "4px 8px",
+                        fontFamily:    MONO,
+                        fontSize:      11,
+                        letterSpacing: "0.05em",
+                        color:         "#888888",
+                        lineHeight:    1.4,
+                      }}
+                    >
+                      <span>{project.subtitle}</span>
+                      {project.metric && (
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                          <span aria-hidden="true" style={{ color: "#d6d6d6" }}>·</span>
+                          <span style={{ color: "#181617", fontWeight: 500 }}>
+                            {project.metric}
+                          </span>
+                        </span>
+                      )}
+                    </p>
+                  </div>
                 </Link>
               </StaggerGridItem>
             );

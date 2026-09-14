@@ -31,20 +31,21 @@ const TIMELINE = [
   { date: "2012 — 2015", org: "Gujarat Technological Uni.", role: "Computer Engineering",    edu: true },
 ];
 
-/* ── Bio paragraphs ─────────────────────────────────────── */
+/* ── Bio — level+years, then companies, then what the work proves,
+      then what's next. Four lines, in the order reviewers read them. ── */
 const BIO = [
-  "Senior Product Designer at Genea, building access control and security software trusted by enterprise teams across North America.",
-  "Over 9+ years I've evolved from graphic design to UX, product design, and systems thinking — transforming complex workflows into experiences that feel simple, intuitive, and scalable.",
-  "I believe AI should augment human thinking, not replace it. Today I'm focused on enterprise security, design operations, and Human × AI collaboration.",
+  "Senior Product Designer, 9 years in enterprise SaaS and security.",
+  "At Genea since 2022, designing access control software trusted by enterprise teams across North America. Previously Ripple Design, TriCore InfoTech, DesignNBuy.",
+  "I take high-stakes operational workflows — access control, compliance, analytics — and make them safe to run at speed. Recent work cut misconfiguration errors 62% and support tickets 34%.",
+  "Looking for senior and staff product design roles at AI-forward product companies.",
 ];
 
-/* ── Capability inventory (replaces tool icons) ─────────── */
-const INVENTORY: { label: string; pct: number; sub: string }[] = [
-  { label: "UX Craft",          pct: 94,  sub: "Interaction · Systems · A11y"   },
-  { label: "Systems Thinking",  pct: 90,  sub: "SaaS · IA · Product Strategy"  },
-  { label: "Human × AI",        pct: 88,  sub: "Prompts · Workflows · Tools"   },
-  { label: "Design Ops",        pct: 84,  sub: "Process · Collab · Scale"      },
-  { label: "Built w/ Curiosity",pct: 100, sub: "Coffee · Side Projects · Learning" },
+/* ── Capability areas ───────────────────────────────────── */
+const CAPABILITIES: { label: string; sub: string }[] = [
+  { label: "UX Craft",         sub: "Interaction · Systems · A11y"  },
+  { label: "Systems Thinking", sub: "SaaS · IA · Product Strategy"  },
+  { label: "Human × AI",       sub: "Prompts · Workflows · Tools"   },
+  { label: "Design Ops",       sub: "Process · Collab · Scale"      },
 ];
 
 /* ── At a Glance ────────────────────────────────────────── */
@@ -87,6 +88,20 @@ const IconDot = () => (
   <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#3ad759", display: "inline-block", flexShrink: 0 }} />
 );
 
+/* ── Viewport hook — this modal is styled inline, so breakpoints
+      have to come from JS rather than CSS media queries. ─────── */
+function useIsNarrow(query = "(max-width: 760px)") {
+  const [narrow, setNarrow] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    setNarrow(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setNarrow(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [query]);
+  return narrow;
+}
+
 /* ── Ctrl button (circle) ───────────────────────────────── */
 function CtrlBtn({ onClick, label, children }: { onClick: () => void; label: string; children: React.ReactNode }) {
   const [hov, setHov] = useState(false);
@@ -113,15 +128,30 @@ function CtrlBtn({ onClick, label, children }: { onClick: () => void; label: str
 }
 
 /* ── Sidebar ────────────────────────────────────────────── */
-function Sidebar() {
+function Sidebar({ narrow = false }: { narrow?: boolean }) {
   return (
-    <aside style={{ width: 101, flexShrink: 0, display: "flex", flexDirection: "column", gap: 20 }}>
-      {/* Portrait */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        <div style={{ position: "relative", width: 101, height: 101, borderRadius: 12, overflow: "hidden", background: C.gray4 }}>
-          <Image src="/about/about1.png" alt="Kartikey Panchal" fill style={{ objectFit: "cover", objectPosition: "center top" }} sizes="101px" />
+    <aside
+      style={{
+        width:         narrow ? "100%" : 101,
+        flexShrink:    0,
+        display:       "flex",
+        flexDirection: "column",
+        gap:           narrow ? 16 : 20,
+      }}
+    >
+      {/* Portrait — sits beside the name on narrow screens */}
+      <div
+        style={{
+          display:       "flex",
+          flexDirection: narrow ? "row" : "column",
+          alignItems:    narrow ? "center" : "stretch",
+          gap:           narrow ? 14 : 8,
+        }}
+      >
+        <div style={{ position: "relative", width: narrow ? 72 : 101, height: narrow ? 72 : 101, flexShrink: 0, borderRadius: 12, overflow: "hidden", background: C.gray4 }}>
+          <Image src="/about/about1.png" alt="Kartikey Panchal" fill style={{ objectFit: "cover", objectPosition: "center top" }} sizes={narrow ? "72px" : "101px"} />
         </div>
-        <div>
+        <div style={{ minWidth: 0 }}>
           <p style={{ margin: 0, fontFamily: DISPLAY, fontSize: 13, fontWeight: 400, color: C.black, lineHeight: 1.35 }}>
             Kartikey Panchal<br />
             <span style={{ color: C.gray1, fontWeight: 300, fontSize: 12 }}>Senior Product Designer</span><br />
@@ -130,28 +160,44 @@ function Sidebar() {
         </div>
       </div>
 
-      {/* Capability inventory */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {/* Capability areas — labels wrap rather than truncate */}
+      <div style={{ display: "flex", flexDirection: "column", gap: narrow ? 8 : 10 }}>
         <p style={{ margin: 0, fontFamily: MONO, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", color: C.gray2 }}>
-          Inventory
+          Focus
         </p>
-        {INVENTORY.map(({ label, pct }) => (
-          <div key={label}>
-            <p style={{ margin: "0 0 3px", fontFamily: MONO, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: C.gray1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {label}
-            </p>
-            <div style={{ height: 2.5, background: C.gray3, borderRadius: 99, overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${pct}%`, background: C.black, borderRadius: 99 }} />
+        <div style={{ display: "flex", flexDirection: narrow ? "row" : "column", flexWrap: narrow ? "wrap" : "nowrap", gap: narrow ? 6 : 10 }}>
+          {CAPABILITIES.map(({ label, sub }) => (
+            <div
+              key={label}
+              style={
+                narrow
+                  ? {
+                      padding:      "4px 10px",
+                      borderRadius: 999,
+                      border:       `0.5px solid ${C.gray3}`,
+                      background:   C.gray4,
+                    }
+                  : { minWidth: 0 }
+              }
+            >
+              <p style={{ margin: 0, fontFamily: MONO, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: C.black, lineHeight: 1.4, whiteSpace: "nowrap" }}>
+                {label}
+              </p>
+              {!narrow && (
+                <p style={{ margin: "2px 0 0", fontFamily: BODY, fontSize: 11, fontWeight: 300, color: C.gray2, lineHeight: 1.4 }}>
+                  {sub}
+                </p>
+              )}
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </aside>
   );
 }
 
 /* ── Body (shared between modal + expanded) ─────────────── */
-function AboutBody({ size = "modal" }: { size?: "modal" | "expanded" }) {
+function AboutBody({ size = "modal", narrow = false }: { size?: "modal" | "expanded"; narrow?: boolean }) {
   const headlineSize = size === "expanded" ? 24 : 20;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: size === "expanded" ? 30 : 24 }}>
@@ -195,11 +241,11 @@ function AboutBody({ size = "modal" }: { size?: "modal" | "expanded" }) {
       {/* Grid: bio copy (left) | timeline (right) */}
       <div style={{
         display: "grid",
-        gridTemplateColumns: size === "expanded" ? "minmax(0,1.35fr) minmax(0,.65fr)" : "minmax(0,1.35fr) minmax(0,.65fr)",
-        gap: 16,
+        gridTemplateColumns: narrow ? "minmax(0,1fr)" : "minmax(0,1.35fr) minmax(0,.65fr)",
+        gap: narrow ? 28 : 16,
       }}>
         {/* Left: bio */}
-        <div style={{ fontFamily: DISPLAY, fontSize: 16, fontWeight: 300, color: C.gray1, paddingRight: 16 }}>
+        <div style={{ fontFamily: DISPLAY, fontSize: 16, fontWeight: 300, color: C.gray1, paddingRight: narrow ? 0 : 16 }}>
           {BIO.map((p, i) => (
             <p key={i} style={{ margin: 0, marginBottom: i < BIO.length - 1 ? 20 : 0, lineHeight: 1.45 }}>{p}</p>
           ))}
@@ -215,8 +261,10 @@ function AboutBody({ size = "modal" }: { size?: "modal" | "expanded" }) {
                   borderBottom: `1px solid ${C.gray3}`,
                   paddingBottom: 14,
                   display: "flex",
-                  flexDirection: size === "expanded" ? "row" : "column",
-                  justifyContent: size === "expanded" ? "space-between" : undefined,
+                  flexDirection: size === "expanded" || narrow ? "row" : "column",
+                  justifyContent: size === "expanded" || narrow ? "space-between" : undefined,
+                  alignItems: narrow ? "baseline" : undefined,
+                  flexWrap: narrow ? "wrap" : undefined,
                   gap: 4,
                   marginTop: edu ? 32 : 0,
                   minWidth: 0,
@@ -230,9 +278,9 @@ function AboutBody({ size = "modal" }: { size?: "modal" | "expanded" }) {
                   fontWeight: 300,
                   color: C.black,
                   lineHeight: 1.2,
-                  whiteSpace: size === "modal" ? "nowrap" : undefined,
-                  overflow: size === "modal" ? "hidden" : undefined,
-                  textOverflow: size === "modal" ? "ellipsis" : undefined,
+                  whiteSpace: size === "modal" && !narrow ? "nowrap" : undefined,
+                  overflow: size === "modal" && !narrow ? "hidden" : undefined,
+                  textOverflow: size === "modal" && !narrow ? "ellipsis" : undefined,
                 }}>
                   {org}{" "}
                   <span style={{ color: C.gray2, fontFamily: DISPLAY, fontSize: "inherit", fontWeight: "inherit" }}>
@@ -243,8 +291,11 @@ function AboutBody({ size = "modal" }: { size?: "modal" | "expanded" }) {
             ))}
           </div>
 
-          {/* Contacts */}
-          <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 2 }}>
+          {/* Contacts — location included; 66% of reviewers look for it */}
+          <div style={{ marginTop: narrow ? 24 : 32, display: "flex", flexDirection: "column", gap: 2 }}>
+            <p style={{ margin: "0 0 6px", fontFamily: DISPLAY, fontSize: 12, fontWeight: 300, color: C.gray1 }}>
+              Ahmedabad, India · GMT+5:30 · open to remote
+            </p>
             <Link href="mailto:kkeyxxvii@gmail.com"
               style={{ fontFamily: DISPLAY, fontSize: 12, fontWeight: 300, color: C.gray2, textDecorationThickness: "0.5px", textUnderlineOffset: 2 }}>
               kkeyxxvii@gmail.com
@@ -301,6 +352,7 @@ function AboutBody({ size = "modal" }: { size?: "modal" | "expanded" }) {
 export default function AboutModal() {
   const { aboutOpen, closeAbout } = useChatContext();
   const [expanded, setExpanded] = useState(false);
+  const narrow = useIsNarrow();
 
   /* Lock scroll */
   useEffect(() => {
@@ -343,9 +395,10 @@ export default function AboutModal() {
                 WebkitBackdropFilter: "blur(24px) saturate(180%)",
                 borderBottom: "0.5px solid rgba(24,22,23,0.08)",
                 display: "grid",
-                gridTemplateColumns: "minmax(0,1fr) auto minmax(0,1fr)",
+                gridTemplateColumns: narrow ? "minmax(0,1fr) auto" : "minmax(0,1fr) auto minmax(0,1fr)",
                 alignItems: "center",
-                padding: "12px 42px",
+                gap: 12,
+                padding: narrow ? "10px 18px" : "12px 42px",
               }}>
                 <div style={{ fontFamily: MONO, fontSize: 12, letterSpacing: "0.08em", textTransform: "uppercase", color: C.gray2, display: "flex", alignItems: "center", gap: 8 }}>
                   <button onClick={closeAbout}
@@ -356,9 +409,11 @@ export default function AboutModal() {
                   <span>/</span>
                   <span style={{ color: C.black }}>About</span>
                 </div>
-                <div style={{ justifySelf: "center", fontFamily: MONO, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", color: C.gray2 }}>
-                  Kartikey Panchal
-                </div>
+                {!narrow && (
+                  <div style={{ justifySelf: "center", fontFamily: MONO, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", color: C.gray2 }}>
+                    Kartikey Panchal
+                  </div>
+                )}
                 <div style={{ justifySelf: "end", display: "flex", gap: 12 }}>
                   <CtrlBtn onClick={() => setExpanded(false)} label="Collapse">
                     <IconCollapse />
@@ -375,14 +430,19 @@ export default function AboutModal() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.52, ease: [0.2, 0.9, 0.25, 1] }}
                 style={{
-                  width: "80%", maxWidth: 1400, margin: "0 auto",
-                  padding: "24px 0 64px",
+                  width: narrow ? "100%" : "80%", maxWidth: 1400, margin: "0 auto",
+                  padding: narrow ? "20px 18px 56px" : "24px 0 64px",
                   display: "flex", flexDirection: "column", gap: 24,
                 }}
               >
-                <div style={{ display: "grid", gridTemplateColumns: "101px minmax(0,1fr)", gap: 36, minHeight: "calc(100vh - 170px)" }}>
-                  <Sidebar />
-                  <AboutBody size="expanded" />
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: narrow ? "minmax(0,1fr)" : "101px minmax(0,1fr)",
+                  gap: narrow ? 28 : 36,
+                  minHeight: narrow ? undefined : "calc(100vh - 170px)",
+                }}>
+                  <Sidebar narrow={narrow} />
+                  <AboutBody size="expanded" narrow={narrow} />
                 </div>
               </motion.div>
             </motion.div>
@@ -425,24 +485,30 @@ export default function AboutModal() {
                   WebkitBackdropFilter: "blur(48px) saturate(180%)",
                   border: "0.5px solid rgba(255,255,255,0.8)",
                   boxShadow: "0 32px 80px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(24,22,23,0.06), inset 0 1px 0 rgba(255,255,255,0.9)",
-                  padding: 56,
+                  padding: narrow ? "56px 20px 28px" : 56,
                   position: "relative",
                 }}
               >
                 {/* Controls — absolute top-right */}
-                <div style={{ position: "absolute", top: 20, right: 22, display: "flex", gap: 12 }}>
-                  <CtrlBtn onClick={() => setExpanded(true)} label="Expand to full screen">
-                    <IconExpand />
-                  </CtrlBtn>
+                <div style={{ position: "absolute", top: narrow ? 12 : 20, right: narrow ? 14 : 22, display: "flex", gap: narrow ? 8 : 12, zIndex: 3 }}>
+                  {!narrow && (
+                    <CtrlBtn onClick={() => setExpanded(true)} label="Expand to full screen">
+                      <IconExpand />
+                    </CtrlBtn>
+                  )}
                   <CtrlBtn onClick={closeAbout} label="Close about">
                     <IconClose />
                   </CtrlBtn>
                 </div>
 
-                {/* Layout: 101px sidebar | content */}
-                <div style={{ display: "grid", gridTemplateColumns: "101px minmax(0,1fr)", gap: 36 }}>
-                  <Sidebar />
-                  <AboutBody size="modal" />
+                {/* Layout: sidebar | content — stacks on narrow screens */}
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: narrow ? "minmax(0,1fr)" : "101px minmax(0,1fr)",
+                  gap: narrow ? 28 : 36,
+                }}>
+                  <Sidebar narrow={narrow} />
+                  <AboutBody size="modal" narrow={narrow} />
                 </div>
               </motion.section>
             </motion.div>
