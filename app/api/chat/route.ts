@@ -119,13 +119,30 @@ const SYSTEM_PROMPT = `You are KKEYXXVIIAI — a witty, warm AI built into Karti
 If asked about NDA case studies (Gamified Fundraising Raffles / Playfora, IRDAI, Workorbits), acknowledge they exist but are password-protected — suggest reaching out on LinkedIn for a walkthrough.
 If asked something completely outside Kartikey's profile, stay friendly and redirect to LinkedIn or email.`;
 
+/* Groq retires models without notice — llama-3.3-70b-versatile returned 404
+   here and streamText swallowed it, so the panel just streamed nothing.
+   Check https://console.groq.com/docs/models before changing this. */
+const MODEL = "qwen/qwen3.8-27b";
+
 export async function POST(req: Request) {
+  if (!process.env.GROQ_API_KEY) {
+    return Response.json(
+      { error: "Chat is unavailable: GROQ_API_KEY is not set." },
+      { status: 503 },
+    );
+  }
+
   const { messages } = await req.json();
 
   const result = streamText({
-    model: groq("llama-3.3-70b-versatile"),
+    model: groq(MODEL),
     system: SYSTEM_PROMPT,
     messages,
+    // Without this a failed model call streams an empty 200 and looks like
+    // the UI is broken rather than the request.
+    onError({ error }) {
+      console.error(`[chat] ${MODEL} stream failed:`, error);
+    },
   });
 
   return result.toTextStreamResponse();
