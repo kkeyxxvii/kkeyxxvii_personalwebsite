@@ -4,11 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
-import {
-  FadeUp,
-  StaggerGrid,
-  StaggerGridItem,
-} from "@/components/Animate";
+import { Rise, Reveal } from "cube-motion/react";
 import GeneaIORulesCard      from "@/components/GeneaIORulesCard";
 import CustomDashboardCard   from "@/components/CustomDashboardCard";
 import GamifiedRafflesCard   from "@/components/GamifiedRafflesCard";
@@ -391,7 +387,8 @@ export default function Home() {
 
       {/* ── Hero ────────────────────────────────────────────── */}
       <div className="px-5 md:px-[42px] pt-[88px] pb-12">
-        <FadeUp delay={0} className="flex flex-col items-center text-center">
+        {/* Staggers in scan order: avatar, role line, proof line, history */}
+        <Rise targets="children" className="flex flex-col items-center text-center">
           {/* Avatar */}
           <div style={{ flexShrink: 0, lineHeight: 0, marginBottom: 20 }}>
             <Image
@@ -468,7 +465,7 @@ export default function Home() {
               </span>
             ))}
           </div>
-        </FadeUp>
+        </Rise>
       </div>
 
       {/* ── Work section ────────────────────────────────────── */}
@@ -558,10 +555,9 @@ export default function Home() {
         className="tab-panel--entering px-5 md:px-[42px] pb-16 mt-0"
         role="tabpanel"
       >
-        <StaggerGrid
+        <Reveal
+          targets="children"
           className="grid grid-cols-2 lg:grid-cols-3 gap-3 pt-3"
-          delayChildren={0.05}
-          staggerChildren={0.05}
         >
           {filtered.map((project, i) => {
             const linkProps = project.external
@@ -569,8 +565,8 @@ export default function Home() {
               : { href: project.slug };
 
             return (
-              <StaggerGridItem key={project.slug + i}>
                 <Link
+                  key={project.slug + i}
                   {...linkProps}
                   className="group block transition-transform duration-300 hover:scale-[0.995]"
                 >
@@ -617,10 +613,9 @@ export default function Home() {
                     </p>
                   </div>
                 </Link>
-              </StaggerGridItem>
             );
           })}
-        </StaggerGrid>
+        </Reveal>
       </div>
 
     </div>

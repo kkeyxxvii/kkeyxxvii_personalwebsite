@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { FadeUp, StaggerList, StaggerItem, ScrollReveal } from "@/components/Animate";
+import { Rise, Reveal } from "cube-motion/react";
 
 /* ─── Data ──────────────────────────────────────────────── */
 const aboutImages = [
@@ -94,16 +94,16 @@ export default function AboutContent() {
             § HERO
         ════════════════════════════════════════════ */}
         <section aria-labelledby="about-headline">
-          <FadeUp className="pt-24 pb-3" delay={0}>
+          <Rise className="pt-24 pb-3">
             <h1
               id="about-headline"
               className="text-[clamp(1.75rem,3.5vw,3.25rem)] leading-[1.15] font-normal text-[#181617] font-[family-name:var(--font-geist-sans)]"
             >
               Senior Product Designer, 9 years in enterprise SaaS and security.
             </h1>
-          </FadeUp>
+          </Rise>
 
-          <FadeUp className="pb-14" delay={0.12}>
+          <Rise className="pb-14" delay={120}>
             <p className="text-sm text-[#4a4a5a] leading-relaxed mb-3">
               Currently at <strong className="font-medium text-[#181617]">Genea</strong>, designing
               access control software trusted by enterprise teams across North America.
@@ -112,7 +112,7 @@ export default function AboutContent() {
             <p className={`text-xs tracking-[0.14em] uppercase text-[#888888] ${MONO}`}>
               Ahmedabad, India · GMT+5:30 · open to remote
             </p>
-          </FadeUp>
+          </Rise>
         </section>
 
         {/* ════════════════════════════════════════════
@@ -120,45 +120,33 @@ export default function AboutContent() {
         ════════════════════════════════════════════ */}
         <section aria-label="About Kartikey" className={`${DIVIDER} py-14`}>
           <SectionLabel>About</SectionLabel>
-          <StaggerList className="space-y-4" delayChildren={0.1} staggerChildren={0.08}>
-
-            <StaggerItem>
+          <Reveal targets="children" className="space-y-4">
               <p className="text-sm text-[#4a4a5a] leading-relaxed">
                 Senior Product Designer at{" "}
                 <strong className="font-medium text-[#181617]">Genea</strong>,
                 building access control and security products trusted by enterprise teams across North America.
               </p>
-            </StaggerItem>
-
-            <StaggerItem>
               <p className="text-sm text-[#4a4a5a] leading-relaxed">
                 Over the last 9+ years, I&apos;ve evolved from graphic design to UX, product design, and systems
                 thinking — helping transform complex workflows into experiences that feel simple, intuitive, and scalable.
               </p>
-            </StaggerItem>
-
-            <StaggerItem>
               <p className="text-sm text-[#4a4a5a] leading-relaxed">
                 I take high-stakes operational workflows — access control, compliance, analytics — and make them
                 safe to run at speed. Recent work cut misconfiguration errors 62%, support tickets 34%, and
                 delete misclicks 90%.
               </p>
-            </StaggerItem>
-
-            <StaggerItem>
               <p className="text-sm text-[#4a4a5a] leading-relaxed">
                 Looking for senior and staff product design roles at AI-forward product companies —
                 ideally enterprise SaaS, security, or developer tooling.
               </p>
-            </StaggerItem>
 
-          </StaggerList>
+          </Reveal>
         </section>
 
         {/* ════════════════════════════════════════════
             § WHERE I'VE WORKED
         ════════════════════════════════════════════ */}
-        <ScrollReveal>
+        <Reveal>
           <section aria-label="Experience" className={`${DIVIDER} py-14`}>
             <SectionLabel>Where I&apos;ve Worked</SectionLabel>
             <div className="flex flex-col gap-4">
@@ -176,12 +164,12 @@ export default function AboutContent() {
               ))}
             </div>
           </section>
-        </ScrollReveal>
+        </Reveal>
 
         {/* ════════════════════════════════════════════
             § AT A GLANCE
         ════════════════════════════════════════════ */}
-        <ScrollReveal>
+        <Reveal>
           <section aria-label="At a Glance" className={`${DIVIDER} py-14`}>
             <SectionLabel>At a Glance</SectionLabel>
             <div className="flex flex-wrap gap-2">
@@ -200,12 +188,12 @@ export default function AboutContent() {
               ))}
             </div>
           </section>
-        </ScrollReveal>
+        </Reveal>
 
         {/* ════════════════════════════════════════════
             § FOCUS
         ════════════════════════════════════════════ */}
-        <ScrollReveal>
+        <Reveal>
           <section aria-label="Focus areas" className={`${DIVIDER} py-14`}>
             <SectionLabel>Focus</SectionLabel>
             <div className="flex flex-col gap-5">
@@ -219,12 +207,12 @@ export default function AboutContent() {
               ))}
             </div>
           </section>
-        </ScrollReveal>
+        </Reveal>
 
         {/* ════════════════════════════════════════════
             § KNOWN FOR
         ════════════════════════════════════════════ */}
-        <ScrollReveal>
+        <Reveal>
           <section aria-label="Known For" className={`${DIVIDER} py-14`}>
             <SectionLabel>Known For</SectionLabel>
             <div className="flex flex-col gap-3">
@@ -238,12 +226,12 @@ export default function AboutContent() {
               ))}
             </div>
           </section>
-        </ScrollReveal>
+        </Reveal>
 
         {/* ════════════════════════════════════════════
             § SIDE PROJECTS
         ════════════════════════════════════════════ */}
-        <ScrollReveal>
+        <Reveal>
           <section aria-label="Side Projects" className={`${DIVIDER} py-14`}>
             <SectionLabel>Side Projects</SectionLabel>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -259,14 +247,14 @@ export default function AboutContent() {
               ))}
             </div>
           </section>
-        </ScrollReveal>
+        </Reveal>
 
       </div>{/* /max-w container */}
 
       {/* ════════════════════════════════════════════
           § PHOTO GALLERY  (full-bleed, outside container)
       ════════════════════════════════════════════ */}
-      <ScrollReveal>
+      <Reveal>
         <section aria-label="Photos" className={`${DIVIDER} py-14`}>
           <div className="max-w-2xl mb-6">
             <SectionLabel>Photos</SectionLabel>
@@ -282,13 +270,13 @@ export default function AboutContent() {
             ))}
           </div>
         </section>
-      </ScrollReveal>
+      </Reveal>
 
       {/* ════════════════════════════════════════════
           § CONTACT
       ════════════════════════════════════════════ */}
       <div className="max-w-2xl">
-        <ScrollReveal>
+        <Reveal>
           <section aria-label="Contact" className={`${DIVIDER} py-14 pb-24`}>
             <SectionLabel>Contact</SectionLabel>
             <p className="text-sm text-[#4a4a5a] leading-relaxed mb-3">
@@ -312,7 +300,7 @@ export default function AboutContent() {
               </Link>
             </div>
           </section>
-        </ScrollReveal>
+        </Reveal>
       </div>
 
     </div>
