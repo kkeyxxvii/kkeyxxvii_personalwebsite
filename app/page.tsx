@@ -36,6 +36,9 @@ type Project = {
   external: boolean;
   nda?:     boolean;
   hidden?:  boolean;
+  /** Fade the card colour over the bottom edge — only for source footage
+      that carries a burned-in watermark there. */
+  coverWatermark?: boolean;
 };
 
 const TABS: { id: Category; label: string }[] = [
@@ -54,7 +57,7 @@ const projects: Project[] = [
     slug:     "/projects/genea-io-rules",
     color:    "#f2f1f1",
     category: "genea" as Category,
-    media:    { type: "component" as const, src: "" },
+    media:    { type: "video" as const, src: "/videos/automation-promo.mp4" },
     external: false,
   },
   {
@@ -66,6 +69,7 @@ const projects: Project[] = [
     category: "personal" as Category,
     media:    { type: "video" as const, src: "/videos/ai-workforce-platform.mp4" },
     external: false,
+    coverWatermark: true,
   },
   {
     title:    "Cutting a 6-screen venue booking flow down to 3",
@@ -193,6 +197,7 @@ function LazyVideo({ src, title }: { src: string; title: string }) {
     <video
       ref={ref}
       src={visible ? src : undefined}
+      autoPlay={!reduced}
       loop={!reduced}
       muted
       playsInline
@@ -219,15 +224,17 @@ function ProjectCard({ project }: { project: typeof projects[number] }) {
         {project.media.type === "video" ? (
           <>
             <LazyVideo src={project.media.src} title={project.title} />
-            {/* Cover bottom watermark — gradient fades into the card's own bg color */}
-            <div
-              className="absolute bottom-0 left-0 right-0 pointer-events-none"
-              style={{
-                height: "9%",
-                background: `linear-gradient(to top, ${project.color} 0%, transparent 100%)`,
-                zIndex: 1,
-              }}
-            />
+            {project.coverWatermark && (
+              /* Fades into the card's own bg colour to hide a burned-in watermark */
+              <div
+                className="absolute bottom-0 left-0 right-0 pointer-events-none"
+                style={{
+                  height: "9%",
+                  background: `linear-gradient(to top, ${project.color} 0%, transparent 100%)`,
+                  zIndex: 1,
+                }}
+              />
+            )}
           </>
         ) : project.media.type === "component" ? (
           project.slug === "/projects/custom-dashboard"
