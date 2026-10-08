@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
-import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 import { Rise, Reveal } from "cube-motion/react";
 import GeneaIORulesCard      from "@/components/GeneaIORulesCard";
 import CustomDashboardCard   from "@/components/CustomDashboardCard";
@@ -152,19 +151,6 @@ function NdaBadge() {
   );
 }
 
-/* ── Diagonal arrow (isabelshic work-card arrow) ───────────── */
-function CardArrow() {
-  return (
-    <svg
-      width="32" height="32" viewBox="0 0 24 24"
-      fill="none" aria-hidden="true"
-      style={{ display: "block", color: "#888888", flexShrink: 0 }}
-    >
-      <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
 /* ── Lazy video ─────────────────────────────────────────────
    Only fetches once the card is near the viewport, so an off-screen
    thumbnail never competes with first paint. Holds still for anyone
@@ -217,150 +203,60 @@ function LazyVideo({ src, title }: { src: string; title: string }) {
   );
 }
 
-/* ── Project card — cursor-follow hover ────────────────────── */
+/* ── Project card ───────────────────────────────────────────
+   Hover lives in CSS: the frame lifts, the media drifts, the rule
+   darkens and the caption arrow slides in. The site already has one
+   custom cursor — a second cursor-tracking element per card would be
+   two things competing for the same glance. */
 function ProjectCard({ project }: { project: typeof projects[number] }) {
-  const [active, setActive] = useState(false);
-
-  /* Spring-tracked mouse position relative to the card */
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const springX = useSpring(mouseX, { stiffness: 500, damping: 50, bounce: 0 });
-  const springY = useSpring(mouseY, { stiffness: 500, damping: 50, bounce: 0 });
-
-  function getRelPos(e: React.MouseEvent<HTMLDivElement>) {
-    const rect = e.currentTarget.getBoundingClientRect();
-    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-  }
-
   return (
     <div
       className="relative w-full overflow-hidden project-card-frame"
-      style={{ backgroundColor: project.color, aspectRatio: "1 / 1", cursor: "none" }}
-      onMouseEnter={(e) => {
-        /* Jump springs to the entry point instantly — no spring lag on first render */
-        const { x, y } = getRelPos(e);
-        springX.jump(x);
-        springY.jump(y);
-        setActive(true);
-      }}
-      onMouseMove={(e) => {
-        const { x, y } = getRelPos(e);
-        mouseX.set(x);
-        mouseY.set(y);
-      }}
-      onMouseLeave={() => setActive(false)}
+      style={{ backgroundColor: project.color, aspectRatio: "1 / 1" }}
     >
-      {/* Media */}
-      {project.media.type === "video" ? (
-        <>
-          <LazyVideo src={project.media.src} title={project.title} />
-          {/* Cover bottom watermark — gradient fades into the card's own bg color */}
-          <div
-            className="absolute bottom-0 left-0 right-0 pointer-events-none"
-            style={{
-              height: "9%",
-              background: `linear-gradient(to top, ${project.color} 0%, transparent 100%)`,
-              zIndex: 1,
-            }}
+      {/* Media — wrapped so the whole composition drifts as one plane */}
+      <div className="project-card-media">
+        {project.media.type === "video" ? (
+          <>
+            <LazyVideo src={project.media.src} title={project.title} />
+            {/* Cover bottom watermark — gradient fades into the card's own bg color */}
+            <div
+              className="absolute bottom-0 left-0 right-0 pointer-events-none"
+              style={{
+                height: "9%",
+                background: `linear-gradient(to top, ${project.color} 0%, transparent 100%)`,
+                zIndex: 1,
+              }}
+            />
+          </>
+        ) : project.media.type === "component" ? (
+          project.slug === "/projects/custom-dashboard"
+            ? <CustomDashboardCard />
+            : project.slug === "/projects/gamified-raffles"
+              ? <GamifiedRafflesCard />
+              : project.slug === "/projects/schlage-ip-integration"
+                ? <SchlageIPCard />
+                : project.slug === "/projects/irdai"
+                  ? <IRDAICard />
+                  : project.slug === "/projects/rental-marketplace"
+                    ? <RentalMarketplaceCard />
+                    : project.slug === "/projects/house-of-agents"
+                      ? <HouseOfAgentsCard />
+                      : <GeneaIORulesCard />
+        ) : (
+          <Image
+            src={(project.media as { type: "image"; src: string }).src}
+            alt={`Thumbnail — ${project.title}`}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
-        </>
-      ) : project.media.type === "component" ? (
-        project.slug === "/projects/custom-dashboard"
-          ? <CustomDashboardCard />
-          : project.slug === "/projects/gamified-raffles"
-            ? <GamifiedRafflesCard />
-            : project.slug === "/projects/schlage-ip-integration"
-              ? <SchlageIPCard />
-              : project.slug === "/projects/irdai"
-                ? <IRDAICard />
-                : project.slug === "/projects/rental-marketplace"
-                  ? <RentalMarketplaceCard />
-                  : project.slug === "/projects/house-of-agents"
-                    ? <HouseOfAgentsCard />
-                    : <GeneaIORulesCard />
-      ) : (
-        <Image
-          src={(project.media as { type: "image"; src: string }).src}
-          alt={`Thumbnail — ${project.title}`}
-          fill
-          className="object-cover"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-        />
-      )}
+        )}
+      </div>
 
       {/* NDA badge */}
       {"nda" in project && project.nda && <NdaBadge />}
 
-      {/* ── Cursor-follow pill ────────────────────────────────── */}
-      <AnimatePresence>
-        {active && (
-          <motion.div
-            style={{
-              position:      "absolute",
-              left:          springX,
-              top:           springY,
-              transform:     "translate(-50%, -50%)",
-              pointerEvents: "none",
-              zIndex:        20,
-            }}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{   scale: 0, opacity: 0 }}
-            transition={{ duration: 0.18, ease: [0.12, 0.9, 0.2, 1] }}
-          >
-            <div
-              style={{
-                display:               "inline-flex",
-                alignItems:            "center",
-                gap:                   14,
-                padding:               "14px 24px 14px 16px",
-                borderRadius:          999,
-                background:            "rgba(255,255,255,0.88)",
-                backdropFilter:        "blur(20px) saturate(180%)",
-                WebkitBackdropFilter:  "blur(20px) saturate(180%)",
-                boxShadow:             "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(24,22,23,0.06), inset 0 1px 0 rgba(255,255,255,0.9)",
-                border:                "0.5px solid rgba(255,255,255,0.7)",
-                maxWidth:              "min(320px, 68vw)",
-              } as React.CSSProperties}
-            >
-              {/* Arrow — vertically centred with the two-line text block */}
-              <div style={{ flexShrink: 0, alignSelf: "center" }}>
-                <CardArrow />
-              </div>
-
-              {/* Affordance + result — the title already sits below the card */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
-                <span
-                  style={{
-                    fontFamily:  DISPLAY,
-                    fontSize:    "clamp(13px, 1.1vw, 15px)",
-                    fontWeight:  500,
-                    color:       "#181617",
-                    lineHeight:  1.3,
-                    whiteSpace:  "nowrap",
-                  }}
-                >
-                  Read case study
-                </span>
-                <span
-                  style={{
-                    fontFamily:    MONO,
-                    fontSize:      "clamp(9px, 0.75vw, 11px)",
-                    fontWeight:    400,
-                    color:         "#888888",
-                    letterSpacing: "0.06em",
-                    whiteSpace:    "nowrap",
-                    overflow:      "hidden",
-                    textOverflow:  "ellipsis",
-                  }}
-                >
-                  {project.metric || project.subtitle}
-                </span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
@@ -482,14 +378,16 @@ export default function Home() {
             marginBottom:   0,
           }}
         >
-          {/* Left: title */}
+          {/* Left: section marker — mono eyebrow reads as a system label,
+              which keeps the display face reserved for content. */}
           <h2
             style={{
-              fontFamily:    DISPLAY,
-              fontSize:      "clamp(1rem, 1.8vw, 1.3rem)",
-              fontWeight:    300,
+              fontFamily:    MONO,
+              fontSize:      11,
+              fontWeight:    400,
               color:         "#181617",
-              letterSpacing: "-0.01em",
+              letterSpacing: "0.16em",
+              textTransform: "uppercase" as const,
               margin:        0,
             }}
           >
@@ -518,27 +416,31 @@ export default function Home() {
                     fontSize:      11,
                     letterSpacing: "0.1em",
                     textTransform: "uppercase" as const,
-                    color:         isActive ? "#181617" : "#888888",
-                    background:    isActive ? "rgba(24,22,23,0.07)" : "transparent",
-                    border:        isActive ? "0.5px solid rgba(24,22,23,0.10)" : "0.5px solid transparent",
+                    color:         isActive ? "#ffffff" : "#8a8a8a",
+                    background:    isActive ? "#181617" : "transparent",
+                    border:        "1px solid",
+                    borderColor:   isActive ? "#181617" : "rgba(24,22,23,0.12)",
                     borderRadius:  999,
-                    padding:       "6px 12px",
+                    padding:       "7px 14px",
                     cursor:        "pointer",
-                    transition:    "color .22s ease, background .22s ease, border .22s ease",
+                    transition:    "color .35s cubic-bezier(0.2,0,0,1), background .35s cubic-bezier(0.2,0,0,1), border-color .35s cubic-bezier(0.2,0,0,1)",
                     display:       "inline-flex",
                     alignItems:    "center",
-                    gap:           5,
-                    minHeight:     32,
+                    gap:           7,
+                    minHeight:     34,
                     whiteSpace:    "nowrap" as const,
                   }}
                 >
                   {tab.label}
-                  <span style={{
-                    fontFamily: MONO,
-                    fontSize:   9,
-                    color:      isActive ? "#606060" : "#bbbbbb",
-                    lineHeight: 1,
-                  }}>
+                  <span
+                    data-metric
+                    style={{
+                      fontFamily: MONO,
+                      fontSize:   9,
+                      color:      isActive ? "rgba(255,255,255,0.55)" : "#bbbbbb",
+                      lineHeight: 1,
+                    }}
+                  >
                     {count}
                   </span>
                 </button>
@@ -557,7 +459,7 @@ export default function Home() {
       >
         <Reveal
           targets="children"
-          className="grid grid-cols-2 lg:grid-cols-3 gap-3 pt-3"
+          className="grid grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-12 pt-4"
         >
           {filtered.map((project, i) => {
             const linkProps = project.external
@@ -568,49 +470,88 @@ export default function Home() {
                 <Link
                   key={project.slug + i}
                   {...linkProps}
-                  className="group block transition-transform duration-300 hover:scale-[0.995]"
+                  className="group block"
                 >
                   <ProjectCard project={project} />
 
-                  {/* Always-visible label — the thumbnail has to carry the title and
-                      the result for a reviewer who never hovers. */}
-                  <div style={{ paddingTop: 12, paddingBottom: 4 }}>
+                  {/* Caption — index and arrow bracket the rule, so the eye
+                      travels image → number → title → outcome. */}
+                  <div style={{ paddingTop: 14 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                      <span
+                        className="card-index"
+                        style={{
+                          fontFamily:    MONO,
+                          fontSize:      10,
+                          letterSpacing: "0.14em",
+                          lineHeight:    1,
+                        }}
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="card-rule" style={{ flex: 1 }} />
+                      <svg
+                        className="card-arrow"
+                        width="12" height="12" viewBox="0 0 24 24"
+                        fill="none" aria-hidden="true"
+                        style={{ display: "block", color: "#181617", flexShrink: 0 }}
+                      >
+                        <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor"
+                          strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+
                     <h3
                       style={{
-                        margin:     0,
-                        fontFamily: DISPLAY,
-                        fontSize:   "clamp(13px, 1.15vw, 15px)",
-                        fontWeight: 400,
-                        color:      "#181617",
-                        lineHeight: 1.35,
+                        margin:        0,
+                        fontFamily:    DISPLAY,
+                        fontSize:      "clamp(15px, 1.25vw, 18px)",
+                        fontWeight:    400,
+                        color:         "#181617",
+                        lineHeight:    1.3,
+                        letterSpacing: "-0.011em",
+                        textWrap:      "balance" as const,
                       }}
                     >
                       {project.title}
                     </h3>
-                    <p
+
+                    <div
                       style={{
-                        margin:        "5px 0 0",
-                        display:       "flex",
-                        flexWrap:      "wrap",
-                        alignItems:    "center",
-                        gap:           "4px 8px",
-                        fontFamily:    MONO,
-                        fontSize:      11,
-                        letterSpacing: "0.05em",
-                        color:         "#888888",
-                        lineHeight:    1.4,
+                        marginTop:  8,
+                        display:    "flex",
+                        flexWrap:   "wrap",
+                        alignItems: "baseline",
+                        gap:        "4px 10px",
                       }}
                     >
-                      <span>{project.subtitle}</span>
                       {project.metric && (
-                        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                          <span aria-hidden="true" style={{ color: "#d6d6d6" }}>·</span>
-                          <span style={{ color: "#181617", fontWeight: 500 }}>
-                            {project.metric}
-                          </span>
+                        <span
+                          data-metric
+                          style={{
+                            fontFamily:    DISPLAY,
+                            fontSize:      13,
+                            fontWeight:    500,
+                            color:         "#181617",
+                            letterSpacing: "-0.005em",
+                          }}
+                        >
+                          {project.metric}
                         </span>
                       )}
-                    </p>
+                      <span
+                        style={{
+                          fontFamily:    MONO,
+                          fontSize:      10,
+                          letterSpacing: "0.1em",
+                          textTransform: "uppercase" as const,
+                          color:         "#9a9a9a",
+                          lineHeight:    1.5,
+                        }}
+                      >
+                        {project.subtitle}
+                      </span>
+                    </div>
                   </div>
                 </Link>
             );
