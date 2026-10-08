@@ -57,7 +57,7 @@ const projects: Project[] = [
     slug:     "/projects/genea-io-rules",
     color:    "#f2f1f1",
     category: "genea" as Category,
-    media:    { type: "video" as const, src: "/videos/automation-promo.mp4" },
+    media:    { type: "video" as const, src: "/videos/automation-promo-43.mp4" },
     external: false,
   },
   {
