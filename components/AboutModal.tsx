@@ -5,6 +5,8 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useChatContext } from "./ChatContext";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Cancel01Icon, ArrowExpand01Icon, ArrowShrink01Icon } from "@hugeicons/core-free-icons";
 
 /* ── Tokens (mirror isabelshic.com exactly) ─────────────── */
 const MONO    = "var(--font-ibm-mono,'IBM Plex Mono',monospace)";
@@ -67,22 +69,13 @@ const KNOWN_FOR = [
 
 /* ── Icons ──────────────────────────────────────────────── */
 const IconClose = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-    <path d="M18 6L6 18M6 6l12 12" />
-  </svg>
+  <HugeiconsIcon icon={Cancel01Icon} size={22} strokeWidth={1.8} aria-hidden="true" />
 );
 const IconExpand = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-    <path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3" />
-  </svg>
+  <HugeiconsIcon icon={ArrowExpand01Icon} size={22} strokeWidth={1.8} aria-hidden="true" />
 );
 const IconCollapse = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-    <path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3" />
-  </svg>
+  <HugeiconsIcon icon={ArrowShrink01Icon} size={22} strokeWidth={1.8} aria-hidden="true" />
 );
 const IconDot = () => (
   <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#3ad759", display: "inline-block", flexShrink: 0 }} />

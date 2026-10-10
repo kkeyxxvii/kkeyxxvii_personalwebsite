@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { Rise, Reveal } from "cube-motion/react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowUpRight01Icon, SquareLock01Icon } from "@hugeicons/core-free-icons";
 import GeneaIORulesCard      from "@/components/GeneaIORulesCard";
 import CustomDashboardCard   from "@/components/CustomDashboardCard";
 import GamifiedRafflesCard   from "@/components/GamifiedRafflesCard";
@@ -144,10 +146,13 @@ function NdaBadge() {
         border:         "1px solid rgba(255,255,255,0.13)",
       }}
     >
-      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2" strokeLinecap="round">
-        <rect x="3" y="11" width="18" height="11" rx="2"/>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-      </svg>
+      <HugeiconsIcon
+        icon={SquareLock01Icon}
+        size={9}
+        strokeWidth={2.2}
+        color="rgba(255,255,255,0.65)"
+        aria-hidden="true"
+      />
       <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.65)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
         NDA
       </span>
@@ -497,15 +502,14 @@ export default function Home() {
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <span className="card-rule" style={{ flex: 1 }} />
-                      <svg
+                      <HugeiconsIcon
                         className="card-arrow"
-                        width="12" height="12" viewBox="0 0 24 24"
-                        fill="none" aria-hidden="true"
+                        icon={ArrowUpRight01Icon}
+                        size={13}
+                        strokeWidth={2}
+                        aria-hidden="true"
                         style={{ display: "block", color: "#181617", flexShrink: 0 }}
-                      >
-                        <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor"
-                          strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
+                      />
                     </div>
 
                     <h3

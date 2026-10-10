@@ -9,6 +9,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowLeft01Icon, ArrowRight01Icon, ArrowUpRight01Icon, SquareLock01Icon } from "@hugeicons/core-free-icons";
 
 const MONO  = "var(--font-geist-mono),monospace";
 const SERIF = "Georgia,'Times New Roman',serif";
@@ -82,9 +84,7 @@ export default function PasswordGate({
           onMouseEnter={(e) => (e.currentTarget.style.color = "#181617")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(24,22,23,0.35)")}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={14} strokeWidth={2} aria-hidden="true" />
           Back
         </Link>
       </div>
@@ -115,11 +115,7 @@ export default function PasswordGate({
             }}
             transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-              stroke="rgba(24,22,23,0.4)" strokeWidth="1.5" strokeLinecap="round">
-              <rect x="3" y="11" width="18" height="11" rx="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
+            <HugeiconsIcon icon={SquareLock01Icon} size={22} strokeWidth={1.5} color="rgba(24,22,23,0.4)" aria-hidden="true" />
           </motion.div>
         </div>
 
@@ -169,11 +165,7 @@ export default function PasswordGate({
               transition:           "border-color 0.2s",
             }}
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-              stroke="rgba(24,22,23,0.28)" strokeWidth="2" strokeLinecap="round">
-              <rect x="3" y="11" width="18" height="11" rx="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
+            <HugeiconsIcon icon={SquareLock01Icon} size={14} strokeWidth={2} color="rgba(24,22,23,0.28)" aria-hidden="true" />
             <input
               ref={inputRef}
               type="password"
@@ -194,10 +186,7 @@ export default function PasswordGate({
                 className="shrink-0 transition-opacity hover:opacity-60 cursor-pointer"
                 style={{ color: "rgba(24,22,23,0.4)" }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
+                <HugeiconsIcon icon={ArrowRight01Icon} size={14} strokeWidth={2.4} aria-hidden="true" />
               </button>
             )}
           </div>
@@ -286,9 +275,7 @@ export default function PasswordGate({
               <span style={{ fontSize: 13, fontWeight: 600, color: "white", whiteSpace: "nowrap" }}>
                 Reach out on LinkedIn
               </span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-                <path d="M7 17L17 7M17 7H7M17 7v10" />
-              </svg>
+              <HugeiconsIcon icon={ArrowUpRight01Icon} size={12} strokeWidth={2.4} color="white" aria-hidden="true" />
             </motion.div>
           </motion.div>
         </Link>

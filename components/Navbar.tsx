@@ -5,6 +5,13 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useChatContext } from "./ChatContext";
 import { PANEL_WIDTH, EASE, DURATION } from "@/lib/panelConstants";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowUpRight01Icon,
+  SparklesIcon,
+  Location01Icon,
+  Cancel01Icon,
+} from "@hugeicons/core-free-icons";
 
 const navLinks = [
   { label: "Work",   path: "/",                            external: false },
@@ -17,32 +24,34 @@ const EASE_NAV = "cubic-bezier(0.12,0.9,0.2,1)";
 
 /* Diagonal arrow — same vibe as isabelshic */
 const ArrowIcon = () => (
-  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2.5" strokeLinecap="round" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
-    <path d="M7 17L17 7M17 7H7M17 7v10" />
-  </svg>
+  <HugeiconsIcon
+    icon={ArrowUpRight01Icon}
+    size={11}
+    strokeWidth={2.2}
+    aria-hidden="true"
+    style={{ display: "block", flexShrink: 0 }}
+  />
 );
 
 const StarIcon = ({ size = 11 }: { size?: number }) => (
-  <svg
-    width={size} height={size} viewBox="0 0 24 24" fill="none"
+  <HugeiconsIcon
+    icon={SparklesIcon}
+    size={size}
+    strokeWidth={1.8}
     aria-hidden="true"
     style={{ animation: "starSpin 5s linear infinite", display: "block", flexShrink: 0 }}
-  >
-    <path d="M6.5 13L7.28 14.57C7.55 15.1 7.68 15.37 7.86 15.6C8.02 15.8 8.2 15.98 8.4 16.14C8.63 16.32 8.9 16.45 9.43 16.72L11 17.5L9.43 18.28C8.9 18.55 8.63 18.68 8.4 18.86C8.2 19.02 8.02 19.2 7.86 19.4C7.68 19.63 7.55 19.9 7.28 20.43L6.5 22L5.72 20.43C5.45 19.9 5.32 19.63 5.14 19.4C4.98 19.2 4.8 19.02 4.6 18.86C4.36 18.68 4.1 18.55 3.57 18.28L2 17.5L3.57 16.72C4.1 16.45 4.36 16.32 4.6 16.14C4.8 15.98 4.98 15.8 5.14 15.6C5.32 15.37 5.45 15.1 5.72 14.57L6.5 13Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M15 2L16.18 5.06C16.46 5.8 16.6 6.16 16.82 6.47C17.02 6.75 17.25 6.98 17.53 7.18C17.84 7.4 18.2 7.54 18.94 7.82L22 9L18.94 10.18C18.2 10.46 17.84 10.6 17.53 10.82C17.25 11.02 17.01 11.25 16.82 11.53C16.6 11.84 16.46 12.2 16.18 12.94L15 16L13.82 12.94C13.54 12.2 13.4 11.84 13.18 11.53C12.98 11.25 12.75 11.02 12.47 10.82C12.16 10.6 11.8 10.46 11.06 10.18L8 9L11.06 7.82C11.8 7.54 12.16 7.4 12.47 7.18C12.75 6.98 12.98 6.75 13.18 6.47C13.4 6.16 13.54 5.8 13.82 5.06L15 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
+  />
 );
 
 /* Pin / location icon */
 const PinIcon = () => (
-  <svg width="9" height="11" viewBox="0 0 24 28" fill="none" stroke="currentColor"
-    strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
-    aria-hidden="true" style={{ display: "block", flexShrink: 0 }}
-  >
-    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-    <circle cx="12" cy="9" r="2.5" />
-  </svg>
+  <HugeiconsIcon
+    icon={Location01Icon}
+    size={11}
+    strokeWidth={2}
+    aria-hidden="true"
+    style={{ display: "block", flexShrink: 0 }}
+  />
 );
 
 /* Rotating status pill — cycles between "Status Available" and "Based In Ahmedabad, India" */
@@ -218,13 +227,13 @@ function NavBtn({
 
 /* Close × icon */
 const CloseIcon = () => (
-  <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
-    style={{ display: "block", flexShrink: 0 }}
+  <HugeiconsIcon
+    icon={Cancel01Icon}
+    size={11}
+    strokeWidth={2.2}
     aria-hidden="true"
-  >
-    <path d="M18 6L6 18M6 6l12 12" />
-  </svg>
+    style={{ display: "block", flexShrink: 0 }}
+  />
 );
 
 /* KkeyBtn — AI-agent chip
