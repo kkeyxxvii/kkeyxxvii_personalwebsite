@@ -294,7 +294,7 @@ export default function Home() {
     <div>
 
       {/* ── Hero ────────────────────────────────────────────── */}
-      <div className="px-5 md:px-[42px] pt-[88px] pb-12">
+      <div className="px-5 md:px-[42px] pt-14 md:pt-[88px] pb-9 md:pb-12">
         {/* Staggers in scan order: avatar, role line, proof line, history */}
         <Rise targets="children" className="flex flex-col items-center text-center">
           {/* Avatar */}
@@ -313,7 +313,7 @@ export default function Home() {
             className="leading-[1.15] mb-5"
             style={{
               fontFamily: DISPLAY,
-              fontSize:   "clamp(1.7rem, 2.8vw, 2.4rem)",
+              fontSize:   "clamp(1.45rem, 4.4vw, 2.4rem)",
               fontWeight: 300,
               color:      "#181617",
               maxWidth:   "min(820px, 100%)",
@@ -337,7 +337,7 @@ export default function Home() {
           <p
             className="mb-6"
             style={{
-              margin:        "0 0 24px",
+              margin:        "0 0 20px",
               fontFamily:    MONO,
               fontSize:      12,
               letterSpacing: "0.08em",
@@ -357,21 +357,29 @@ export default function Home() {
               { year: "2020 — 2022", company: "Ripple Design",   url: "#"                  },
               { year: "2018 — 2020", company: "TriCore InfoTech", url: "#"                 },
               { year: "2017 — 2018", company: "DesignNBuy",      url: "#"                  },
-            ].map((exp, i) => (
-              <span key={i} className="flex items-baseline gap-2">
-                <span style={{ fontFamily: MONO, fontSize: 11, color: "#aaaaaa", letterSpacing: "0.06em" }}>
-                  {exp.year}
+            ].map((exp, i) => {
+              const meta = { fontFamily: MONO, fontSize: 11, letterSpacing: "0.06em" } as const;
+              return (
+                <span key={i} className="flex items-baseline gap-2 py-1">
+                  <span style={{ ...meta, color: "#aaaaaa" }}>{exp.year}</span>
+                  {/* Only Genea has somewhere to go. The rest were links to "#" —
+                      focusable, announced as links, and leading nowhere. */}
+                  {exp.url === "#" ? (
+                    <span style={{ ...meta, color: "#606060" }}>{exp.company}</span>
+                  ) : (
+                    <Link
+                      href={exp.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover-underline transition-colors duration-300"
+                      style={{ ...meta, color: "#606060", padding: "6px 0" }}
+                    >
+                      {exp.company}
+                    </Link>
+                  )}
                 </span>
-                <Link
-                  href={exp.url}
-                  target="_blank"
-                  className="hover-underline transition-colors duration-300"
-                  style={{ fontFamily: MONO, fontSize: 11, color: "#606060", letterSpacing: "0.06em" }}
-                >
-                  {exp.company}
-                </Link>
-              </span>
-            ))}
+              );
+            })}
           </div>
         </Rise>
       </div>
@@ -385,6 +393,10 @@ export default function Home() {
             display:        "flex",
             alignItems:     "center",
             justifyContent: "space-between",
+            /* Below ~420px the label and the four pills cannot share a
+               line; wrapping beats letting them collide. */
+            flexWrap:       "wrap",
+            gap:            "12px 16px",
             borderBottom:   "1px solid rgba(24,22,23,0.08)",
             paddingBottom:  14,
             marginBottom:   0,
@@ -400,6 +412,7 @@ export default function Home() {
               color:         "#181617",
               letterSpacing: "0.16em",
               textTransform: "uppercase" as const,
+              whiteSpace:    "nowrap" as const,
               margin:        0,
             }}
           >

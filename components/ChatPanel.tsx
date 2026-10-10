@@ -64,7 +64,9 @@ export default function ChatPanel() {
 
   /* Detect desktop */
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
+    /* Matches the lg: breakpoint the nav and FAB switch at, so the
+       push layout only engages once there is room beside a 420px panel. */
+    const mq = window.matchMedia("(min-width: 1024px)");
     setIsDesktop(mq.matches);
     const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
     mq.addEventListener("change", handler);

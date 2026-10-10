@@ -358,7 +358,9 @@ export default function Navbar() {
   const { open: chatOpen, openChat, closeChat, aboutOpen, openAbout, closeAbout } = useChatContext();
 
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
+    /* Matches the lg: breakpoint the nav and FAB switch at, so the
+       push layout only engages once there is room beside a 420px panel. */
+    const mq = window.matchMedia("(min-width: 1024px)");
     setIsDesktop(mq.matches);
     const h = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
     mq.addEventListener("change", h);
@@ -380,7 +382,7 @@ export default function Navbar() {
 
         {/* ── Desktop ──────────────────────────────── */}
         <div
-          className="hidden md:grid items-center px-[42px] py-[10px]"
+          className="hidden lg:grid items-center px-6 xl:px-[42px] py-[10px]"
           style={{ gridTemplateColumns: "minmax(0,1fr) auto minmax(0,1fr)" }}
         >
           {/* LEFT — brand + inline subtitle. Brand goes home (convention). */}
@@ -390,14 +392,19 @@ export default function Navbar() {
                 Kartikey Panchal
               </span>
             </NavBtn>
-            <span style={{
-              fontFamily:    MONO,
-              fontSize:      12,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color:         "#888888",
-              whiteSpace:    "nowrap",
-            }}>
+            {/* Secondary to the name and the nav; shown only once the row is
+                wide enough to hold it without crowding the links. */}
+            <span
+              className="hidden xl:inline"
+              style={{
+                fontFamily:    MONO,
+                fontSize:      12,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color:         "#888888",
+                whiteSpace:    "nowrap",
+              }}
+            >
               Product Designer · Human × AI
             </span>
           </div>
@@ -430,7 +437,7 @@ export default function Navbar() {
         </div>
 
         {/* ── Mobile header ────────────────────────── */}
-        <div className="flex md:hidden items-center justify-between px-5 py-[13px]">
+        <div className="flex lg:hidden items-center justify-between px-5 py-[13px]">
           <Link href="/" onClick={() => setMenuOpen(false)}>
             <span style={{
               fontFamily: MONO, fontSize: 12, letterSpacing: "0.12em",
@@ -477,7 +484,7 @@ export default function Navbar() {
         </div>
 
         {/* ── Mobile drawer ────────────────────────── */}
-        <div className={`md:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}>
+        <div className={`lg:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}>
           <div
             className="px-5 pb-8 pt-3 flex flex-col gap-4 border-t border-[rgba(24,22,23,0.08)]"
             style={{ background: "rgba(255,255,255,0.92)", backdropFilter: "blur(24px) saturate(180%)", WebkitBackdropFilter: "blur(24px) saturate(180%)" } as React.CSSProperties}
@@ -543,7 +550,7 @@ export default function Navbar() {
       <button
         onClick={handleOpenChat}
         aria-label="Open KKEYXXVIIAI"
-        className={`fab-kkeyxxviiai flex md:hidden items-center justify-center transition-all duration-300 ${chatOpen ? "opacity-0 scale-75 pointer-events-none" : "opacity-100 scale-100"}`}
+        className={`fab-kkeyxxviiai flex lg:hidden items-center justify-center transition-all duration-300 ${chatOpen ? "opacity-0 scale-75 pointer-events-none" : "opacity-100 scale-100"}`}
         style={{ color: "white" }}
       >
         <span className="absolute inset-0 rounded-full animate-ping opacity-20" style={{ background: "var(--gradient)" }} />
