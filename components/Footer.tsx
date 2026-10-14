@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import FooterWordmark from "./FooterWordmark";
 
 const MONO = "var(--font-ibm-mono, var(--font-geist-mono), monospace)";
 
@@ -128,6 +129,12 @@ export default function Footer() {
           ))}
         </nav>
 
+      </div>
+
+      {/* Oversized logotype — the sign-off, shown as its own outline so the
+          mark reads as something drawn rather than typed. */}
+      <div className="pt-10 md:pt-14">
+        <FooterWordmark />
       </div>
     </footer>
   );
