@@ -1,15 +1,222 @@
-/* Auto-generated from BDOGrotesk-Bold.ttf via opentype.js — the nodes are
-   the word's real outline points, not decoration. Regenerate rather than
-   hand-edit if the logotype or the face changes. */
+"use client";
+
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { CMDS, CTRLS, LABELS, NODES, SHOWN, VIEWBOX, type Cmd } from "./footerWordmarkData";
+
+/* Overlay sizes are glyph units (1000 upm) against a ~0.16–0.26 render
+   scale, so they read ~5x larger here than on screen. Strokes use
+   non-scaling-stroke to stay hairlines at any width. */
+const ANCHOR = 46;
+const HANDLE = 22;
+const GRAB   = 130;   // invisible hit area — fingers need more than 7px
+const FS     = 86;
+
+const VB = VIEWBOX.split(" ").map(Number);
+const INK = "#141414";
+const BLUE = "#2F6BFF";
+
+type Offsets = Record<number, { dx: number; dy: number }>;
+
+/** Rebuild the path, applying any live offsets to the points they belong to. */
+function buildPath(offsets: Offsets): string {
+  if (!Object.keys(offsets).length) {
+    return CMDS.map((c) => c.join(" ")).join(" ");
+  }
+  const moved = CMDS.map((c) => c.slice()) as Cmd[];
+  for (const key of Object.keys(offsets)) {
+    const n = NODES[Number(key)];
+    const { dx, dy } = offsets[Number(key)];
+    const cmd = moved[n.c];
+    const xi = 1 + n.p * 2;
+    (cmd[xi] as number) += dx;
+    (cmd[xi + 1] as number) += dy;
+  }
+  return moved.map((c) => c.join(" ")).join(" ");
+}
+
 export default function FooterWordmark() {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [offsets, setOffsets] = useState<Offsets>({});
+  const [dragging, setDragging] = useState<number | null>(null);
+  const [hover, setHover] = useState<number | null>(null);
+  const [calm, setCalm] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setCalm(mq.matches);
+    const h = (e: MediaQueryListEvent) => setCalm(e.matches);
+    mq.addEventListener("change", h);
+    return () => mq.removeEventListener("change", h);
+  }, []);
+
+  /* Screen pixels → glyph units, so a drag tracks the cursor exactly
+     however wide the footer happens to be. */
+  const toUnits = useCallback((px: number, py: number) => {
+    const el = svgRef.current;
+    if (!el) return { x: 0, y: 0 };
+    const r = el.getBoundingClientRect();
+    return { x: (px / r.width) * VB[2], y: (py / r.height) * VB[3] };
+  }, []);
+
+  /* Track the pointer ourselves rather than trusting movementX/Y, which
+     is inconsistent across browsers and zero under pointer capture. */
+  const last = useRef<{ x: number; y: number } | null>(null);
+  /* The handlers read this, not the state: a fast flick can deliver
+     pointermove before React has re-rendered from pointerdown. */
+  const dragRef = useRef<number | null>(null);
+
+  const start = useCallback(
+    (i: number) => (e: React.PointerEvent) => {
+      if (calm) return;
+      e.preventDefault();
+      /* Capture keeps the drag alive past the node's own hit area, but it
+         throws on a pointerId the element never saw — never let that take
+         the drag down with it. */
+      try {
+        (e.target as Element).setPointerCapture?.(e.pointerId);
+      } catch {
+        /* no capture: the svg-level move handler still tracks the drag */
+      }
+      last.current = { x: e.clientX, y: e.clientY };
+      dragRef.current = i;
+      setDragging(i);
+    },
+    [calm],
+  );
+
+  const move = useCallback(
+    (e: React.PointerEvent) => {
+      const i = dragRef.current;
+      if (i === null || !last.current) return;
+      const d = toUnits(e.clientX - last.current.x, e.clientY - last.current.y);
+      last.current = { x: e.clientX, y: e.clientY };
+      setOffsets((prev) => {
+        const cur = prev[i] ?? { dx: 0, dy: 0 };
+        return { ...prev, [i]: { dx: cur.dx + d.x, dy: cur.dy + d.y } };
+      });
+    },
+    [toUnits],
+  );
+
+  /* Let go and the outline settles back — the letterform is borrowed,
+     not vandalised. */
+  const end = useCallback(() => {
+    dragRef.current = null;
+    last.current = null;
+    setDragging(null);
+    setOffsets({});
+  }, []);
+
+  const d = useMemo(() => buildPath(offsets), [offsets]);
+  const at = (i: number) => {
+    const n = NODES[i];
+    const o = offsets[i];
+    return { x: n.x + (o?.dx ?? 0), y: n.y + (o?.dy ?? 0) };
+  };
+
+  const settle = dragging === null
+    ? "cx .55s cubic-bezier(.2,0,0,1), cy .55s cubic-bezier(.2,0,0,1), x .55s cubic-bezier(.2,0,0,1), y .55s cubic-bezier(.2,0,0,1), d .55s cubic-bezier(.2,0,0,1)"
+    : "none";
+
   return (
-    <div aria-hidden="true" style={{ width: "100%", lineHeight: 0 }}>
-      <svg viewBox="-21 -819 5555 909" aria-hidden="true" style={{ display: "block", width: "100%", height: "auto" }}>
-      <path d="M69-729L69 0L225 0L225-204L338-330L551 0L734 0L448-434L717-729L527-729L311-487Q290-463 269-438Q248-413 225-384L225-729L69-729M787-729L787 0L943 0L943-204L1056-330L1269 0L1452 0L1166-434L1435-729L1245-729L1029-487Q1008-463 987-438Q966-413 943-384L943-729L787-729M1505-729L1505 0L2071 0L2071-125L1661-125L1661-311L1996-311L1996-432L1661-432L1661-605L2041-605L2041-729L1505-729M2358-278L2358 0L2513 0L2513-278L2784-729L2609-729L2552-625Q2524-576 2495.50-525.50Q2467-475 2438-414Q2407-475 2379-525Q2351-575 2323-624L2266-729L2087-729L2358-278M3037-381L2771 0L2948 0L3132-282L3314 0L3493 0L3231-382L3467-729L3292-729L3136-481L2981-729L2803-729L3037-381M3767-381L3501 0L3678 0L3862-282L4044 0L4223 0L3961-382L4197-729L4022-729L3866-481L3711-729L3533-729L3767-381M4222-729L4504 0L4673 0L4954-729L4794-729L4660-357Q4640-299 4622-246.50Q4604-194 4590-146Q4576-195 4558-246Q4540-297 4520-358L4388-729L4222-729M5017 0L5173 0L5173-729L5017-729L5017 0M5288 0L5444 0L5444-729L5288-729" fill="#141414"/>
-      <path d="M69-729L69 0L225 0L225-204L338-330L551 0L734 0L448-434L717-729L527-729L311-487Q290-463 269-438Q248-413 225-384L225-729L69-729M787-729L787 0L943 0L943-204L1056-330L1269 0L1452 0L1166-434L1435-729L1245-729L1029-487Q1008-463 987-438Q966-413 943-384L943-729L787-729M1505-729L1505 0L2071 0L2071-125L1661-125L1661-311L1996-311L1996-432L1661-432L1661-605L2041-605L2041-729L1505-729M2358-278L2358 0L2513 0L2513-278L2784-729L2609-729L2552-625Q2524-576 2495.50-525.50Q2467-475 2438-414Q2407-475 2379-525Q2351-575 2323-624L2266-729L2087-729L2358-278M3037-381L2771 0L2948 0L3132-282L3314 0L3493 0L3231-382L3467-729L3292-729L3136-481L2981-729L2803-729L3037-381M3767-381L3501 0L3678 0L3862-282L4044 0L4223 0L3961-382L4197-729L4022-729L3866-481L3711-729L3533-729L3767-381M4222-729L4504 0L4673 0L4954-729L4794-729L4660-357Q4640-299 4622-246.50Q4604-194 4590-146Q4576-195 4558-246Q4540-297 4520-358L4388-729L4222-729M5017 0L5173 0L5173-729L5017-729L5017 0M5288 0L5444 0L5444-729L5288-729" fill="none" stroke="#2F6BFF" strokeWidth="1.2" vectorEffect="non-scaling-stroke" opacity="0.85"/>
-      <line x1="311.0" y1="-487.0" x2="290.0" y2="-463.0" stroke="#2F6BFF" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6"/><circle cx="290.0" cy="-463.0" r="22" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><line x1="269.0" y1="-438.0" x2="248.0" y2="-413.0" stroke="#2F6BFF" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6"/><circle cx="248.0" cy="-413.0" r="22" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><line x1="1029.0" y1="-487.0" x2="1008.0" y2="-463.0" stroke="#2F6BFF" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6"/><circle cx="1008.0" cy="-463.0" r="22" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><line x1="987.0" y1="-438.0" x2="966.0" y2="-413.0" stroke="#2F6BFF" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6"/><circle cx="966.0" cy="-413.0" r="22" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><line x1="2552.0" y1="-625.0" x2="2524.0" y2="-576.0" stroke="#2F6BFF" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6"/><circle cx="2524.0" cy="-576.0" r="22" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><line x1="2495.5" y1="-525.5" x2="2467.0" y2="-475.0" stroke="#2F6BFF" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6"/><circle cx="2467.0" cy="-475.0" r="22" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><line x1="2438.0" y1="-414.0" x2="2407.0" y2="-475.0" stroke="#2F6BFF" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6"/><circle cx="2407.0" cy="-475.0" r="22" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><line x1="2379.0" y1="-525.0" x2="2351.0" y2="-575.0" stroke="#2F6BFF" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6"/><circle cx="2351.0" cy="-575.0" r="22" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><line x1="4660.0" y1="-357.0" x2="4640.0" y2="-299.0" stroke="#2F6BFF" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6"/><circle cx="4640.0" cy="-299.0" r="22" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><line x1="4622.0" y1="-246.5" x2="4604.0" y2="-194.0" stroke="#2F6BFF" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6"/><circle cx="4604.0" cy="-194.0" r="22" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><line x1="4590.0" y1="-146.0" x2="4576.0" y2="-195.0" stroke="#2F6BFF" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6"/><circle cx="4576.0" cy="-195.0" r="22" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><line x1="4558.0" y1="-246.0" x2="4540.0" y2="-297.0" stroke="#2F6BFF" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6"/><circle cx="4540.0" cy="-297.0" r="22" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/>
-      <rect x="46.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="202.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="315.0" y="-353.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="711.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="694.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="288.0" y="-510.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="202.0" y="-407.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="202.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="764.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="920.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="1033.0" y="-353.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="1429.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="1412.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="1006.0" y="-510.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="920.0" y="-407.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="920.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="1482.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="2048.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="1638.0" y="-148.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="1973.0" y="-334.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="1638.0" y="-455.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="2018.0" y="-628.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="1482.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="2335.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="2490.0" y="-301.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="2586.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="2472.5" y="-548.5" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="2415.0" y="-437.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="2300.0" y="-647.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="2243.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="2335.0" y="-301.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="2748.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="3109.0" y="-305.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="3470.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="3444.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="3113.0" y="-504.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="2780.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="3744.0" y="-404.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="3655.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="4021.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="3938.0" y="-405.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="3999.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="3688.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="3744.0" y="-404.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="4481.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="4931.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="4637.0" y="-380.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="4567.0" y="-169.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="4535.0" y="-269.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="4497.0" y="-381.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="4199.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="5150.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="4994.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="5265.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="5421.0" y="-752.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/><rect x="5265.0" y="-23.0" width="46" height="46" fill="#fff" stroke="#2F6BFF" strokeWidth="1.6" vectorEffect="non-scaling-stroke"/>
-      <g transform="translate(105.8 -785.0)"><rect x="0" y="-98" width="399" height="102" rx="4" fill="#B5B5B0" opacity="0.95"/><text x="13" y="-6" fontFamily="ui-monospace,monospace" fontSize="86" fill="#24241E">69, 729</text></g><g transform="translate(261.8 -230.0)"><rect x="0" y="-98" width="453" height="102" rx="4" fill="#F2E25C" opacity="0.95"/><text x="13" y="-6" fontFamily="ui-monospace,monospace" fontSize="86" fill="#24241E">225, 384</text></g><g transform="translate(753.8 -785.0)"><rect x="0" y="-98" width="453" height="102" rx="4" fill="#B5B5B0" opacity="0.95"/><text x="13" y="-6" fontFamily="ui-monospace,monospace" fontSize="86" fill="#24241E">717, 729</text></g><g transform="translate(979.8 -230.0)"><rect x="0" y="-98" width="453" height="102" rx="4" fill="#B5B5B0" opacity="0.95"/><text x="13" y="-6" fontFamily="ui-monospace,monospace" fontSize="86" fill="#24241E">943, 384</text></g><g transform="translate(1471.8 -785.0)"><rect x="0" y="-98" width="506" height="102" rx="4" fill="#F2E25C" opacity="0.95"/><text x="13" y="-6" fontFamily="ui-monospace,monospace" fontSize="86" fill="#24241E">1435, 729</text></g><g transform="translate(1697.8 29.0)"><rect x="0" y="-98" width="506" height="102" rx="4" fill="#B5B5B0" opacity="0.95"/><text x="13" y="-6" fontFamily="ui-monospace,monospace" fontSize="86" fill="#24241E">1661, 125</text></g><g transform="translate(1697.8 -488.0)"><rect x="0" y="-98" width="506" height="102" rx="4" fill="#B5B5B0" opacity="0.95"/><text x="13" y="-6" fontFamily="ui-monospace,monospace" fontSize="86" fill="#24241E">1661, 432</text></g>
+    <div
+      aria-hidden="true"
+      style={{
+        width: "100%",
+        lineHeight: 0,
+        cursor: calm ? "default" : "crosshair",
+        touchAction: "none",
+      }}
+    >
+      <svg
+        ref={svgRef}
+        viewBox={VIEWBOX}
+        style={{ display: "block", width: "100%", height: "auto", overflow: "visible" }}
+        onPointerMove={move}
+        onPointerUp={end}
+        onPointerCancel={end}
+        onPointerLeave={end}
+      >
+        <path d={d} fill={INK} style={{ transition: settle }} />
+        <path
+          d={d}
+          fill="none"
+          stroke={BLUE}
+          strokeWidth={1.2}
+          vectorEffect="non-scaling-stroke"
+          opacity={0.85}
+          style={{ transition: settle }}
+        />
+
+        {/* Bezier handles */}
+        {CTRLS.map((h, i) => (
+          <g key={`h${i}`}>
+            <line
+              x1={h.x} y1={h.y} x2={h.x} y2={h.y}
+              stroke={BLUE} strokeWidth={1} vectorEffect="non-scaling-stroke" opacity={0.6}
+            />
+            <circle
+              cx={h.x} cy={h.y} r={HANDLE}
+              fill="#fff" stroke={BLUE} strokeWidth={1.6} vectorEffect="non-scaling-stroke"
+            />
+          </g>
+        ))}
+
+        {/* Anchors — visible square plus a finger-sized invisible target */}
+        {SHOWN.map((i) => {
+          const { x, y } = at(i);
+          const live = dragging === i;
+          const warm = live || hover === i;
+          /* The page hides the system cursor, so the node itself has to
+             show it is grabbable: it grows and fills on approach. */
+          const side = warm ? ANCHOR * 1.5 : ANCHOR;
+          return (
+            <g key={`n${i}`}>
+              <rect
+                x={x - side / 2} y={y - side / 2}
+                width={side} height={side}
+                fill={warm ? BLUE : "#fff"}
+                stroke={BLUE} strokeWidth={warm ? 2.4 : 1.6}
+                vectorEffect="non-scaling-stroke"
+                style={{ transition: settle }}
+              />
+              {!calm && (
+                <circle
+                  cx={x} cy={y} r={GRAB / 2}
+                  fill="transparent"
+                  style={{ cursor: live ? "grabbing" : "grab" }}
+                  onPointerDown={start(i)}
+                  onPointerEnter={() => setHover(i)}
+                  onPointerLeave={() => setHover((h) => (h === i ? null : h))}
+                />
+              )}
+            </g>
+          );
+        })}
+
+        {/* Coordinate chips — the readout follows the point as it moves */}
+        {LABELS.map((l, i) => {
+          const ni = NODES.findIndex((n) => n.c === l.c && n.p === l.p);
+          const { x, y } = at(ni);
+          const txt = `${Math.round(x)}, ${Math.round(-y)}`;
+          const w = txt.length * FS * 0.62 + 26;
+          const dy = l.up ? -ANCHOR - 10 : ANCHOR + FS + 22;
+          return (
+            <g
+              key={`l${i}`}
+              transform={`translate(${x + ANCHOR * 0.8} ${y + dy})`}
+              style={{ transition: settle }}
+            >
+              <rect
+                x={0} y={-FS - 12} width={w} height={FS + 16} rx={4}
+                fill={l.accent ? "#F2E25C" : "#B5B5B0"} opacity={0.95}
+              />
+              <text x={13} y={-6} fontFamily="ui-monospace,monospace" fontSize={FS} fill="#24241E">
+                {txt}
+              </text>
+            </g>
+          );
+        })}
       </svg>
     </div>
   );
