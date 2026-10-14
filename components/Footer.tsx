@@ -26,7 +26,7 @@ export default function Footer() {
         <p
           style={{
             margin:     0,
-            fontFamily: "var(--font-nunito, var(--font-inter), sans-serif)",
+            fontFamily: "var(--font-bdo), var(--font-inter), sans-serif",
             fontSize:   16,
             fontWeight: 300,
             color:      "#181617",

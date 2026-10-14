@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Inter, Nunito, IBM_Plex_Mono, Geist_Mono } from "next/font/google";
+import { Inter, IBM_Plex_Mono, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
 import CustomCursor  from "@/components/CustomCursor";
@@ -10,19 +11,26 @@ import ShiftLayout   from "@/components/ShiftLayout";
 import AboutModal    from "@/components/AboutModal";
 import { ChatProvider } from "@/components/ChatContext";
 
-/* ── Primary UI font ──────────────────────────── */
+/* ── BDO Grotesk — display and UI ───────────────
+   Self-hosted. Ships the five cuts the site actually sets; BDO has a
+   true 600, so no weight has to resolve to a neighbour. */
+const bdoGrotesk = localFont({
+  variable: "--font-bdo",
+  display:  "swap",
+  src: [
+    { path: "./fonts/BDOGrotesk-Light.woff2",    weight: "300", style: "normal" },
+    { path: "./fonts/BDOGrotesk-Regular.woff2",  weight: "400", style: "normal" },
+    { path: "./fonts/BDOGrotesk-Medium.woff2",   weight: "500", style: "normal" },
+    { path: "./fonts/BDOGrotesk-DemiBold.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/BDOGrotesk-Bold.woff2",     weight: "700", style: "normal" },
+  ],
+});
+
+/* ── Inter stays as the metric-compatible fallback ── */
 const inter = Inter({
   variable: "--font-inter",
   subsets:  ["latin"],
   weight:   ["300", "400", "500", "600"],
-  display:  "swap",
-});
-
-/* ── Display / heading font ───────────────────── */
-const nunito = Nunito({
-  variable: "--font-nunito",
-  subsets:  ["latin"],
-  weight:   ["300", "400", "600", "700"],
   display:  "swap",
 });
 
@@ -45,7 +53,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${nunito.variable} ${ibmPlexMono.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="en" className={`${bdoGrotesk.variable} ${inter.variable} ${ibmPlexMono.variable} ${geistMono.variable} h-full antialiased`}>
       {/* suppressHydrationWarning: browser extensions (e.g. Grammarly) inject body
           attributes before hydration; only attribute-level mismatches are suppressed */}
       <body className="h-full overflow-x-hidden" style={{ background: "#f5f5f7" }} suppressHydrationWarning>

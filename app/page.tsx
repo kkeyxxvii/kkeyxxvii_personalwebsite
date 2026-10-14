@@ -15,7 +15,7 @@ import RentalMarketplaceCard  from "@/components/RentalMarketplaceCard";
 import HouseOfAgentsCard     from "@/components/HouseOfAgentsCard";
 
 const MONO    = "var(--font-ibm-mono, var(--font-geist-mono), monospace)";
-const DISPLAY = "var(--font-nunito, var(--font-inter), system-ui, sans-serif)";
+const DISPLAY = "var(--font-bdo), var(--font-inter), system-ui, sans-serif";
 
 /* ── Categories for tabs ──────────────────────────────────── */
 type Category = "all" | "genea" | "personal";
@@ -321,7 +321,7 @@ export default function Home() {
           >
             Kartikey Panchal is a Senior Product Designer with 9 years in enterprise SaaS,
             designing{" "}
-            <em className="not-italic" style={{ fontWeight: 600 }}>Human × AI</em>
+            <em className="not-italic u-mark" style={{ fontWeight: 600 }}>Human × AI</em>
             {" "}access control at{" "}
             <Link
               href="https://genea.com"
@@ -346,8 +346,8 @@ export default function Home() {
               lineHeight:    1.6,
             }}
           >
-            Security software trusted by enterprise teams across North America.
-            Previously Ripple Design, TriCore InfoTech.
+            <span className="u-mark-soft">Security software trusted by enterprise teams
+            across North America.</span> Previously Ripple Design, TriCore InfoTech.
           </p>
 
           {/* Experience pills — compact centered row */}
@@ -484,7 +484,7 @@ export default function Home() {
       >
         <Reveal
           targets="children"
-          className="grid grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-12 pt-4"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-14 pt-4"
         >
           {filtered.map((project, i) => {
             const linkProps = project.external
@@ -529,11 +529,13 @@ export default function Home() {
                       style={{
                         margin:        0,
                         fontFamily:    DISPLAY,
-                        fontSize:      "clamp(15px, 1.25vw, 18px)",
-                        fontWeight:    400,
+                        /* Two-up cards give the title room, so it steps up
+                           to carry the block the way the reference does. */
+                        fontSize:      "clamp(17px, 1.7vw, 23px)",
+                        fontWeight:    600,
                         color:         "#181617",
-                        lineHeight:    1.3,
-                        letterSpacing: "-0.011em",
+                        lineHeight:    1.25,
+                        letterSpacing: "-0.018em",
                         textWrap:      "balance" as const,
                       }}
                     >
@@ -552,10 +554,11 @@ export default function Home() {
                       {project.metric && (
                         <span
                           data-metric
+                          className="u-mark-soft"
                           style={{
                             fontFamily:    DISPLAY,
-                            fontSize:      13,
-                            fontWeight:    500,
+                            fontSize:      14,
+                            fontWeight:    600,
                             color:         "#181617",
                             letterSpacing: "-0.005em",
                           }}

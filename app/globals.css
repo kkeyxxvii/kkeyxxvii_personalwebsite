@@ -112,8 +112,8 @@
   --chat-border:  rgba(24, 22, 23, 0.08);
 
   /* ── Fonts ──────────────────────────────────── */
-  --font-sans:    var(--font-inter);
-  --font-display: var(--font-nunito);
+  --font-sans:    var(--font-bdo), var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-bdo), var(--font-inter), system-ui, sans-serif;
   --font-mono:    var(--font-ibm-mono);
   --font-code:    var(--font-geist-mono);
 }
@@ -131,8 +131,8 @@
   --color-success:    var(--success);
   --color-grey:       var(--grey);
   --color-surface:    var(--surface);
-  --font-sans:        var(--font-inter);
-  --font-display:     var(--font-nunito);
+  --font-sans:        var(--font-bdo);
+  --font-display:     var(--font-bdo);
   --font-mono:        var(--font-ibm-mono);
   --font-code:        var(--font-geist-mono);
 }
@@ -143,7 +143,7 @@
 body {
   background:  var(--background);
   color:       var(--foreground);
-  font-family: var(--font-inter, Inter), system-ui, sans-serif;
+  font-family: var(--font-bdo), var(--font-inter, Inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -167,6 +167,35 @@ h1, h2, h3 {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
 }
+
+/* ══════════════════════════════════════════════════
+   EMPHASIS
+   Two devices, used sparingly: weight carries the key
+   phrase inside a block, a measured underline marks the
+   heading and the line under it. Browser-default
+   underlines sit too close and too heavy to use as-is.
+══════════════════════════════════════════════════ */
+.u-mark {
+  text-decoration-line:      underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset:     0.22em;
+  text-decoration-color:     rgba(24, 22, 23, 0.26);
+  transition: text-decoration-color 0.35s cubic-bezier(0.2, 0, 0, 1);
+}
+.u-mark:hover { text-decoration-color: rgba(24, 22, 23, 0.65); }
+
+/* Quieter cut for secondary lines, so subtext reads as
+   marked without competing with the heading above it. */
+.u-mark-soft {
+  text-decoration-line:      underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset:     0.28em;
+  text-decoration-color:     rgba(24, 22, 23, 0.16);
+}
+
+/* On dark cards the key phrase goes white rather than bolder —
+   weight alone does not separate at small sizes on dark. */
+.key-on-dark { color: #ffffff; font-weight: 500; }
 
 html {
   scroll-behavior: smooth;
@@ -235,14 +264,13 @@ html {
    MASONRY  (Fun page)
 ══════════════════════════════════════════════════ */
 .masonry-grid {
-  column-count: 3;
+  column-count: 2;
   column-gap:   20px;
 }
 .masonry-grid > * {
   break-inside: avoid;
   margin-bottom: 20px;
 }
-@media (max-width: 1024px) { .masonry-grid { column-count: 2; } }
 @media (max-width: 640px)  { .masonry-grid { column-count: 1; } }
 
 /* ══════════════════════════════════════════════════

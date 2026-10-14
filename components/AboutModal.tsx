@@ -10,7 +10,7 @@ import { Cancel01Icon, ArrowExpand01Icon, ArrowShrink01Icon } from "@hugeicons/c
 
 /* ── Tokens (mirror isabelshic.com exactly) ─────────────── */
 const MONO    = "var(--font-ibm-mono,'IBM Plex Mono',monospace)";
-const DISPLAY = "var(--font-nunito,'Nunito',sans-serif)";
+const DISPLAY = "var(--font-bdo), var(--font-inter), sans-serif";
 const SERIF   = "'Source Serif 4',Georgia,serif";
 const BODY    = "var(--font-inter,'Inter',sans-serif)";
 

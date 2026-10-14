@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { FadeUp, ScrollReveal, ScrollStaggerGrid, ScrollStaggerItem } from "@/components/Animate";
 
 const MONO    = "var(--font-ibm-mono, var(--font-geist-mono), monospace)";
-const DISPLAY = "var(--font-nunito, var(--font-inter), system-ui, sans-serif)";
+const DISPLAY = "var(--font-bdo), var(--font-inter), system-ui, sans-serif";
 
 type FunProject = {
   title: string;
